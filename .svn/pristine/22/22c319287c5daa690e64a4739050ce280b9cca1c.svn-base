@@ -2,8 +2,8 @@ GPDR Cookie banner, by Intastellar Solutions, International
 
 License:            GPL v2 or later
 License URI:        https://www.gnu.org/licenses/gpl-2.0.html
-Stable tag:         3.2.0
-Tested up to:       6.3
+Stable tag:         3.1.0
+Tested up to:       6.1
 Contributors:       intastellar
 Requires at least:  5.8
 Requires PHP:       7.4
@@ -21,14 +21,8 @@ This plugin is loading external JavaScript files one which is the script for the
 6. This is how the cookiebanner looks like in compact mode.
 
 == Changelog ==
-= 3.0.1 =
-Fixed a bug where the cookie banner was not showing up.
-= 3.0.0 =
-Updated the plugin to the latest Cookie Consent script.
-= 2.1.1 =
-Fixed some minor errors
-= 2.1.0 =
-Added the ability to add a companys name for the cookie overview list. Then we updated the cookie banner file link to a new one. For a structured changes.
+= 3.1.0 =
+Added the posibillity to add required cookies to the banner. This is for the user to know, that the website is using cookies that are required for the website to work.
 = 2.0.0 =
 In this Version we´ve redesigned the admin page for the plugin. We have categorized every thing, into: branding, intro, settings & privacy policy.
 = 1.1.1 =

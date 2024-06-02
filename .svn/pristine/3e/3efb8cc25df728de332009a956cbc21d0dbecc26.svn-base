@@ -26,7 +26,6 @@
         register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', "intastellarDisplayCookieAdvenced");
         register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', 'intastellarCCPAcollection');
         register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', 'intastellarCookieList');
-        register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', 'intastellarGoogleTagId');
     }
 
     add_action('admin_init', 'intastellarSettingsRegistration', 1);
@@ -96,14 +95,13 @@
                     'logo' => $logo,
                     'color' => $color,
                     'company' => $brandName,
-                    'gtagId' => get_option('intastellarGoogleTagId'),
-                    'requiredCookies' => (str_contains(get_option('intastellarCookieList'), "\n") ) ? expolde("\n", get_option('intastellarCookieList')) : expolde(",", get_option('intastellarCookieList')),
                     'text' => filter_var(get_option('intastellarDisplayCookieNoticeText'), FILTER_VALIDATE_BOOLEAN),
                     'ccpa' => array(
                         "on" => filter_var(get_option('intastellarCCPA'), FILTER_VALIDATE_BOOLEAN),
                         "url" => get_option('intastellarCCPAurl'),
                         "collection" => $collection
                     ),
+                    'requiredCookies' => (str_contains(get_option('intastellarCookieList'), "\n") ) ? expolde("\n", get_option('intastellarCookieList')) : expolde(",", get_option('intastellarCookieList')),
                     'advanced' => $advanced
                 ),
             ) ), 
@@ -144,10 +142,6 @@
                                 <option value="ltr" <?php _e(($value1 == 'ltr'?'selected="selected"':'')); ?>>Left</option>
                                 <option value="rtl" <?php _e(($value1 == 'rtl'?'selected="selected"':'')); ?>>Right</option>
                             </select>
-                        </section>
-                        <section>
-                            <label>Google Tag Id</label>
-                            <input type="text" value="<?php _e(get_option('intastellarGoogleTagId')); ?>">
                         </section>
                         <section>
                             <label>
