@@ -5,7 +5,7 @@
     Version: 3.2.0
     Description: Get your Website GDPR Compliance: Remove 3rd partie cookies from begin on until user gives consents. We are helping you and your Website to become GDPR compliant.
     Author: Intastellar Solutions, International
-    Text Domain: intastellar-consents
+    Text Domain: intastellar-gdpr-cookiebanner
     Author URI: https://www.intastellarsolutions.com
     License:           GPL v2 or later
     License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -14,20 +14,19 @@ require_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
 function intastellarSettingsRegistration()
 {
-    register_setting('intastellar-consents_plugin_options_group', 'intastellarCustomIcon');
-    register_setting('intastellar-consents_plugin_options_group', 'intastellarCookieBannerColor');
-    register_setting('intastellar-consents_plugin_options_group', 'intastellarCookieBanner-brandName');
-    register_setting('intastellar-consents_plugin_options_group', 'intastellarPrivacyLink');
-    register_setting('intastellar-consents_plugin_options_group', 'intastellarPrivacyLink-checkbox');
-    register_setting('intastellar-consents_plugin_options_group', 'intastellarSetCookiePosition');
-    register_setting('intastellar-consents_plugin_options_group', 'intastellarDisplayCookieNoticeText');
-    register_setting('intastellar-consents_plugin_options_group', 'intastellarSelectLanguage');
-    register_setting('intastellar-consents_plugin_options_group', 'intastellarCCPA');
-    register_setting('intastellar-consents_plugin_options_group', 'intastellarCCPAUrl');
-    register_setting('intastellar-consents_plugin_options_group', "intastellarDisplayCookieAdvenced");
-    register_setting('intastellar-consents_plugin_options_group', 'intastellarCCPAcollection');
-    register_setting('intastellar-consents_plugin_options_group', 'intastellarCookieList');
-    register_setting('intastellar-consents_plugin_options_group', 'intastellarSiteRoot');
+    register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', 'intastellarCustomIcon');
+    register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', 'intastellarCookieBannerColor');
+    register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', 'intastellarCookieBanner-brandName');
+    register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', 'intastellarPrivacyLink');
+    register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', 'intastellarPrivacyLink-checkbox');
+    register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', 'intastellarSetCookiePosition');
+    register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', 'intastellarDisplayCookieNoticeText');
+    register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', 'intastellarSelectLanguage');
+    register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', 'intastellarCCPA');
+    register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', 'intastellarCCPAUrl');
+    register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', "intastellarDisplayCookieAdvenced");
+    register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', 'intastellarCCPAcollection');
+    register_setting('intastellar-gdpr-cookiebanner_plugin_options_group', 'intastellarCookieList');
 }
 
 add_action('admin_init', 'intastellarSettingsRegistration', 1);
@@ -42,12 +41,12 @@ function initIntastellarAdminStyles()
 
 function initIntastellarSettingsPage()
 {
-    add_menu_page('Intastellar Consents', 'Intastellar Consents', 'manage_options', 'intastellar-consents', 'intastellarGDPRSettingsForm', 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI2LjAuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCA1MDEuOCAyMzEuMyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNTAxLjggMjMxLjM7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4KCS5zdDB7ZmlsbC1ydWxlOmV2ZW5vZGQ7Y2xpcC1ydWxlOmV2ZW5vZGQ7ZmlsbDojRkZGRkZGO30KPC9zdHlsZT4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTE2MS43LDExNC41Yy0yMTIuOS04Ni0yNS02Ni4zLTI1LTY2LjNzLTI3OS42LTQ0LjUsNy45LDc5YzE3MS4zLDczLjYsMzI1LjgsMjguMSwzMjUuOCwyOC4xCglTMzUwLjEsMTkwLjcsMTYxLjcsMTE0LjV6Ii8+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xOTMuNSwxMDcuMWMtMTY3LjYtNjQuMy0xNC00OS45LTE0LTQ5LjlzLTIxOS40LTI5LjIsOC4zLDYwLjRjMTM0LjMsNTIuOSwyNjIsMjYuNSwyNjIsMjYuNQoJUzM0My45LDE2NC44LDE5My41LDEwNy4xeiIvPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMzEwLjUsMTguMmMwLDAtMTAxLjctMzAuMS0xMzUuMSw3MS41bDMyLjEsMTIuNEMyMDcuNSwxMDIuMiwyMDIuOSwxOC41LDMxMC41LDE4LjJ6Ii8+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0yMTMuMywxNTEuMWwtMzMuNi0xMC4yYzMyLjksNjAuMiw5Mi43LDY2LjQsOTIuNyw2Ni40QzIzMS45LDE5Ni4yLDIxMy4zLDE1MS4xLDIxMy4zLDE1MS4xeiIvPgo8L3N2Zz4K');
-    add_submenu_page("intastellar-consents", "Intro", "Intro", "manage_options", "intastellar-consents", "intastellarGDPRSettingsForm", null);
-    add_submenu_page("intastellar-consents", "Branding", "Branding", "manage_options", "intastellar-consents/branding", "intastellarCookieBranding", null);
-    add_submenu_page("intastellar-consents", "Settings", "Settings", "manage_options", "intastellar-consents/settings", "intastellarCookieSettings", null);
-    add_submenu_page("intastellar-consents", "Privacy", "Privacy", "manage_options", "intastellar-consents/privacy", "intastellarGDPRPrivacyPage", null);
-    add_submenu_page("intastellar-consents", "Help", "Help", "manage_options", "intastellar-consents/help", "intastellarCookieHelp", null);
+    add_menu_page('Intastellar GDPR Cookie banner', 'Intastellar GDPR Cookie banner', 'manage_options', 'intastellar-gdpr-cookiebanner', 'intastellarGDPRSettingsForm', 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI2LjAuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCA1MDEuOCAyMzEuMyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNTAxLjggMjMxLjM7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4KCS5zdDB7ZmlsbC1ydWxlOmV2ZW5vZGQ7Y2xpcC1ydWxlOmV2ZW5vZGQ7ZmlsbDojRkZGRkZGO30KPC9zdHlsZT4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTE2MS43LDExNC41Yy0yMTIuOS04Ni0yNS02Ni4zLTI1LTY2LjNzLTI3OS42LTQ0LjUsNy45LDc5YzE3MS4zLDczLjYsMzI1LjgsMjguMSwzMjUuOCwyOC4xCglTMzUwLjEsMTkwLjcsMTYxLjcsMTE0LjV6Ii8+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xOTMuNSwxMDcuMWMtMTY3LjYtNjQuMy0xNC00OS45LTE0LTQ5LjlzLTIxOS40LTI5LjIsOC4zLDYwLjRjMTM0LjMsNTIuOSwyNjIsMjYuNSwyNjIsMjYuNQoJUzM0My45LDE2NC44LDE5My41LDEwNy4xeiIvPgo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMzEwLjUsMTguMmMwLDAtMTAxLjctMzAuMS0xMzUuMSw3MS41bDMyLjEsMTIuNEMyMDcuNSwxMDIuMiwyMDIuOSwxOC41LDMxMC41LDE4LjJ6Ii8+CjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0yMTMuMywxNTEuMWwtMzMuNi0xMC4yYzMyLjksNjAuMiw5Mi43LDY2LjQsOTIuNyw2Ni40QzIzMS45LDE5Ni4yLDIxMy4zLDE1MS4xLDIxMy4zLDE1MS4xeiIvPgo8L3N2Zz4K');
+    add_submenu_page("intastellar-gdpr-cookiebanner", "Intro", "Intro", "manage_options", "intastellar-gdpr-cookiebanner", "intastellarGDPRSettingsForm", null);
+    add_submenu_page("intastellar-gdpr-cookiebanner", "Branding", "Branding", "manage_options", "intastellar-gdpr-cookiebanner/branding", "intastellarCookieBranding", null);
+    add_submenu_page("intastellar-gdpr-cookiebanner", "Settings", "Settings", "manage_options", "intastellar-gdpr-cookiebanner/settings", "intastellarCookieSettings", null);
+    add_submenu_page("intastellar-gdpr-cookiebanner", "Privacy", "Privacy", "manage_options", "intastellar-gdpr-cookiebanner/privacy", "intastellarGDPRPrivacyPage", null);
+    add_submenu_page("intastellar-gdpr-cookiebanner", "Help", "Help", "manage_options", "intastellar-gdpr-cookiebanner/help", "intastellarCookieHelp", null);
 }
 add_action('admin_menu', 'initIntastellarSettingsPage');
 
@@ -90,11 +89,6 @@ function loadIntastellarCookieBanner()
         $link = get_option('intastellarPrivacyLink');
     }
     $collection = explode("\n", get_option('intastellarCCPAcollection'));
-    $collection = array_map('trim', $collection);
-
-    $rootDomain = get_option('intastellarSiteRoot');
-
-    $requiredCookies = (str_contains(get_option('intastellarCookieList'), "\n")) ? explode("\n", get_option('intastellarCookieList')) : explode(",", get_option('intastellarCookieList'));
 
     wp_add_inline_script(
         'intastellar-gdpr-settings',
@@ -112,12 +106,11 @@ function loadIntastellarCookieBanner()
                     "url" => get_option('intastellarCCPAurl'),
                     "collection" => $collection
                 ),
-                'requiredCookies' => $requiredCookies,
-                'advanced' => $advanced,
-                'rootDomain' => $rootDomain
+                'requiredCookies' => (str_contains(get_option('intastellarCookieList'), "\n")) ? expolde("\n", get_option('intastellarCookieList')) : expolde(",", get_option('intastellarCookieList')),
+                'advanced' => $advanced
             ),
         )),
-        'before'
+        'after'
     );
 }
 
@@ -136,11 +129,11 @@ function intastellarCookieSettings()
         <?php include("intastellarGDPRAdminPanelHeader.php"); ?>
         <section class="intastellarPluginGrid">
             <aside class="intastellarPlugin-sideNavigation">
-                <a href="?page=intastellar-consents">Intro</a>
-                <a href="?page=intastellar-consents/branding">Branding</a>
-                <a href="?page=intastellar-consents/settings" class="active">Settings</a>
-                <a href="?page=intastellar-consents/privacy">Privacy Policy</a>
-                <a href="?page=intastellar-consents/help">Help</a>
+                <a href="?page=intastellar-gdpr-cookiebanner">Intro</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/branding">Branding</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/settings" class="active">Settings</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/privacy">Privacy Policy</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/help">Help</a>
             </aside>
             <div class="intastellarPluginContent">
                 <header class="intastellarPluginPage-header">
@@ -148,17 +141,13 @@ function intastellarCookieSettings()
                     <p>Adjust here your settings for the cookiebanner, choose where the banner should be position, if you want to have Cookie notice text, view it in fullscreen and change your prefered language.</p>
                 </header>
                 <form method="post" action="options.php" enctype="multipart/form-data">
-                    <?php settings_fields('intastellar-consents_plugin_options_group'); ?>
+                    <?php settings_fields('intastellar-gdpr-cookiebanner_plugin_options_group'); ?>
                     <section id="placement" class="intastellarPluginContent__items">
                         <label for="intastellarSetCookiePosition_id">Placement:</label>
                         <select name="intastellarSetCookiePosition" class="regular-text" id="intastellarSetCookiePosition_id">
                             <option value="ltr" <?php _e(($value1 == 'ltr' ? 'selected="selected"' : '')); ?>>Left</option>
                             <option value="rtl" <?php _e(($value1 == 'rtl' ? 'selected="selected"' : '')); ?>>Right</option>
                         </select>
-                    </section>
-                    <section class="intastellarPluginContent__items">
-                        <label for="rootDomain">Your Main Domain</label>
-                        <input type="text" name="intastellarSiteRoot" class="regular-text" id="rootDomain" value="<?php _e(get_option("intastellarSiteRoot")); ?>">
                     </section>
                     <section>
                         <label>
@@ -244,32 +233,28 @@ function intastellarGDPRSettingsForm()
         <?php include("intastellarGDPRAdminPanelHeader.php"); ?>
         <section class="intastellarPluginGrid">
             <aside class="intastellarPlugin-sideNavigation">
-                <a href="?page=intastellar-consents" class="active">Intro</a>
-                <a href="?page=intastellar-consents/branding">Branding</a>
-                <a href="?page=intastellar-consents/settings">Settings</a>
-                <a href="?page=intastellar-consents/privacy">Privacy Policy</a>
-                <a href="?page=intastellar-consents/help">Help</a>
+                <a href="?page=intastellar-gdpr-cookiebanner" class="active">Intro</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/branding">Branding</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/settings">Settings</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/privacy">Privacy Policy</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/help">Help</a>
             </aside>
             <div class="intastellarPluginContent">
                 <header class="intastellarPluginPage-header">
-                    <h3 class="intastellarPluginHeader__headline">Welcome to Intastellar Consents Solutions</h3>
+                    <h3 class="intastellarPluginHeader__headline">Welcome to Intastellar Solutions GDPR Cookiebanner</h3>
                     <p>This cookiebanner helps you and your Website to become GDPR conform.</p>
                 </header>
                 <form method="post" action="options.php" enctype="multipart/form-data">
                     <p>To get started we need your Privacy Policy to begin with. After that you can edit the branding: choose your brand color and your own logo, and under the settings page you can go into detail, the placement of the cookie banner, choose whether nor to display text in the cookie notice, or what language you wanna use.</p>
-                    <p>You wanna learn more about this cookie banner? Then you can read more under: <a target="_blank" href="https://www.intastellarsolutions.com/solutions/cookie-consents">www.intastellarsolutions.com/solutions/cookie-consents</a></p>
+                    <p>You wanna learn more about this cookie banner? Then you can read more under: <a target="_blank" href="https://www.intastellarsolutions.com/gdpr-cookiebanner">intastellarsolutions.com/gdpr-cookiebanner</a></p>
                     <p>So lets get started with your privacy policy & prefered language.</p>
-                    <?php settings_fields('intastellar-consents_plugin_options_group'); ?>
+                    <?php settings_fields('intastellar-gdpr-cookiebanner_plugin_options_group'); ?>
                     <section id="privacy" class="intastellarPluginContent__items">
                         <label for="intastellarPrivacyLink_id">URL to <strong>your</strong> Privacy Policy page*:</label>
                         <section>
                             <input type='text' class="regular-text" id="intastellarPrivacyLink_id" name="intastellarPrivacyLink" required value="<?php _e(get_option('intastellarPrivacyLink')); ?>">
                             <input type="checkbox" class="intastellarPluginContent__items-checkbox" id="intastellarPrivacyLink-checkbox" name="intastellarPrivacyLink-checkbox" value="true" <?php _e(($checkbox == 'true' ? 'checked="checked"' : '')); ?>> <label for="intastellarPrivacyLink-checkbox">Open in new window</label>
                         </section>
-                    </section>
-                    <section class="intastellarPluginContent__items">
-                        <label for="rootDomain">Your Main Domain</label>
-                        <input type="text" name="intastellarSiteRoot" class="regular-text" id="rootDomain" value="<?php _e(get_option("intastellarSiteRoot")); ?>">
                     </section>
                     <section id="language" class="intastellarPluginContent__items">
                         <label for="intastellarSelectLanguage_id">Language:</label>
@@ -296,7 +281,7 @@ function intastellarGDPRSettingsForm()
                                                                                                                     } ?>">
                     <button type="submit" class="intastellarPluginSaveButton">Save changes</button>
                 </form>
-                <p>You can also read the docs or download the newest version: <a href="https://developers.intastellarsolutions.com/gdpr-cookiebanner/docs/wordpress-docs?utm_medium=wordpress_plugin&utm_source=<?php _e($_SERVER["HTTP_HOST"]) ?>" target="_blank" rel="noopener">Intastellar Consents Solutions</a></p>
+                <p>You can also read the docs or download the newest version: <a href="https://developers.intastellarsolutions.com/gdpr-cookiebanner/docs/wordpress-docs?utm_medium=wordpress_plugin&utm_source=<?php _e($_SERVER["HTTP_HOST"]) ?>" target="_blank" rel="noopener">Intastellar GDPR cookie banner</a></p>
                 <?php include("intastellarGDPRAdminPanelFooter.php"); ?>
             </div>
         </section>
@@ -312,11 +297,11 @@ function intastellarGDPRPrivacyPage()
         <?php include("intastellarGDPRAdminPanelHeader.php"); ?>
         <section class="intastellarPluginGrid">
             <aside class="intastellarPlugin-sideNavigation">
-                <a href="?page=intastellar-consents">Intro</a>
-                <a href="?page=intastellar-consents/branding">Branding</a>
-                <a href="?page=intastellar-consents/settings">Settings</a>
-                <a href="?page=intastellar-consents/privacy" class="active">Privacy Policy</a>
-                <a href="?page=intastellar-consents/help">Help</a>
+                <a href="?page=intastellar-gdpr-cookiebanner">Intro</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/branding">Branding</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/settings">Settings</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/privacy" class="active">Privacy Policy</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/help">Help</a>
             </aside>
             <div class="intastellarPluginContent">
                 <header class="intastellarPluginPage-header">
@@ -324,7 +309,7 @@ function intastellarGDPRPrivacyPage()
                     <p>Change your privacy link and if you want to have it open in a new window.</p>
                 </header>
                 <form method="post" action="options.php" enctype="multipart/form-data">
-                    <?php settings_fields('intastellar-consents_plugin_options_group'); ?>
+                    <?php settings_fields('intastellar-gdpr-cookiebanner_plugin_options_group'); ?>
                     <section id="privacy" class="intastellarPluginContent__items">
                         <label for="intastellarPrivacyLink_id">URL to <strong>your</strong> Privacy Policy page*:</label>
                         <section>
@@ -349,7 +334,7 @@ function intastellarGDPRPrivacyPage()
                     <input type="hidden" name="intastellarDisplayCookieNoticeText" id="intastellarDisplayCookieNoticeText" value="<?php _e(get_option('intastellarDisplayCookieNoticeText')); ?>">
                     <button type="submit" class="intastellarPluginSaveButton">Save changes</button>
                 </form>
-                <p>You can also read the docs or download the newest version: <a href="https://developers.intastellarsolutions.com/gdpr-cookiebanner/docs/wordpress-docs?utm_medium=wordpress_plugin&utm_source=<?php _e($_SERVER["HTTP_HOST"]) ?>" target="_blank" rel="noopener">Intastellar Consents Solutions</a></p>
+                <p>You can also read the docs or download the newest version: <a href="https://developers.intastellarsolutions.com/gdpr-cookiebanner/docs/wordpress-docs?utm_medium=wordpress_plugin&utm_source=<?php _e($_SERVER["HTTP_HOST"]) ?>" target="_blank" rel="noopener">Intastellar GDPR cookie banner</a></p>
                 <?php include("intastellarGDPRAdminPanelFooter.php"); ?>
             </div>
         </section>
@@ -365,11 +350,11 @@ function intastellarCookieBranding()
         <?php include("intastellarGDPRAdminPanelHeader.php"); ?>
         <section class="intastellarPluginGrid">
             <aside class="intastellarPlugin-sideNavigation">
-                <a href="?page=intastellar-consents">Intro</a>
-                <a href="?page=intastellar-consents/branding" class="active">Branding</a>
-                <a href="?page=intastellar-consents/settings" class="">Settings</a>
-                <a href="?page=intastellar-consents/privacy">Privacy Policy</a>
-                <a href="?page=intastellar-consents/help">Help</a>
+                <a href="?page=intastellar-gdpr-cookiebanner">Intro</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/branding" class="active">Branding</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/settings" class="">Settings</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/privacy">Privacy Policy</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/help">Help</a>
             </aside>
             <div class="intastellarPluginContent">
                 <header class="intastellarPluginPage-header">
@@ -377,7 +362,7 @@ function intastellarCookieBranding()
                     <p>Customize your banner to reflect your brands identity. Change the apperance of the cookie banner, by using your brand color and logo. </p>
                 </header>
                 <form method="post" action="options.php" enctype="multipart/form-data">
-                    <?php settings_fields('intastellar-consents_plugin_options_group'); ?>
+                    <?php settings_fields('intastellar-gdpr-cookiebanner_plugin_options_group'); ?>
                     <section id="brandname" class="intastellarPluginContent__items">
                         <label for="intastellarCustomIcon_id">
                             Brand name / Company name:
@@ -437,11 +422,11 @@ function intastellarCookieHelp()
         <?php include("intastellarGDPRAdminPanelHeader.php"); ?>
         <section class="intastellarPluginGrid">
             <aside class="intastellarPlugin-sideNavigation">
-                <a href="?page=intastellar-consents">Intro</a>
-                <a href="?page=intastellar-consents/branding">Branding</a>
-                <a href="?page=intastellar-consents/settings">Settings</a>
-                <a href="?page=intastellar-consents/privacy">Privacy Policy</a>
-                <a href="?page=intastellar-consents/help" class="active">Help</a>
+                <a href="?page=intastellar-gdpr-cookiebanner">Intro</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/branding">Branding</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/settings">Settings</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/privacy">Privacy Policy</a>
+                <a href="?page=intastellar-gdpr-cookiebanner/help" class="active">Help</a>
             </aside>
             <div class="intastellarPluginContent">
                 <h1>Help</h1>
