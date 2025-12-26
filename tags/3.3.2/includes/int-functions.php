@@ -45,15 +45,16 @@ add_action('admin_enqueue_scripts', 'initIntastellarAdminStyles', 1);
 function initIntastellarAdminStyles()
 {
     $plugin_version = get_plugin_data(__FILE__)['Version'];
-    wp_register_style('intastellarStyle', plugin_dir_url(__FILE__) . 'intastellarAdminStyle.css', false, '3.3');
+    wp_register_style('intastellarStyle', plugin_dir_url(__FILE__) . 'intastellarAdminStyle.css', false, '3.3.1');
     wp_enqueue_style('intastellarStyle');
     wp_enqueue_script('intastellarScript', plugin_dir_url(__FILE__) . 'intastellarAdminScript.js', true, $plugin_version, true);
 }
 
 function intastellar_enqueue_media_uploader()
 {
+    $plugin_version = get_plugin_data(__FILE__)['Version'];
     wp_enqueue_media();
-    wp_enqueue_script('intastellar-media-uploader', plugin_dir_url(__FILE__) . 'media-uploader.js', array('jquery'), null, true);
+    wp_enqueue_script('intastellar-media-uploader', plugin_dir_url(__FILE__) . 'media-uploader.js', array('jquery'), $plugin_version, true);
 }
 add_action('admin_enqueue_scripts', 'intastellar_enqueue_media_uploader');
 

@@ -2,21 +2,30 @@
 
 License:            GPL v2 or later
 License URI:        https://www.gnu.org/licenses/gpl-2.0.html
-Stable tag:         3.3.2
-Tested up to:       6.6.2
+Stable tag:         3.4.1
+Tested up to:       6.9
 Contributors:       intastellar
 Requires at least:  5.8
 Requires PHP:       7.4
 
 = Short Description =
-Get compliance with EU GDPR cookie law.
+Automatically block tracking scripts and display a GDPR-compliant cookie banner.
 == Description ==
-This plugin loads a cookiebanner to your Wordpress site. It´s blocking full automatic all 3rd party cookies and scripts that a Website uses. There is no need for searching for all scripts it self.
+This plugin loads a cookiebanner to your Wordpress site. its blocking full automatic all 3rd party cookies and scripts that a Website uses. There is no need for searching for all scripts it self.
 This plugin is loading external JavaScript files, mainly the script for the Cookiebanner, from our server. This is necessary to keep the plugin up to date and to provide the best possible service.
 The script is loaded on every page load, so the cookiebanner is always up to date. The script is loading the cookiebanner in the language that is set in the settings page.
 
-The domain of the script is: https://consents.cdn.intastellarsolutions.com
-Styling of the banner is being loaded from https://downloads.intastellarsolutions.com
+The plugin loads the following external resources which are required for the consent banner to function:
+JavaScript from:
+https://consents.cdn.intastellarsolutions.com
+CSS styling from:
+https://downloads.intastellarsolutions.com
+The banner and consent management logic run from these hosted resources.
+Without these external files, the plugin will not display or function properly.
+No personal data or WordPress user information is sent to these domains simply by loading the script.
+
+Why are external resources required?
+The consent system is centrally maintained so updates to compliance rules, UI, and consent logic can be rolled out without requiring site owners to manually update the plugin.
 
 You can find the service on our website: https://www.intastellarsolutions.com/solutions/cookie-consents
 Find the privacy policy here: https://www.intastellarsolutions.com/about/legal/privacy
@@ -25,7 +34,7 @@ Find the terms of service here: https://www.intastellarsolutions.com/about/legal
 == Installation ==
 1. Upload the plugin files to the `/wp-content/plugins/intastellar-consents-solutions` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress
-3. Use the Settings->Intastellar Consents Solutions screen to configure the plugin
+3. Under Intastellar CMP -> intro, configurate the privacy url & your language. Save it & you are good to go.
 
 == Frequently Asked Questions ==
 = How do I add a privacy policy? =
@@ -61,6 +70,14 @@ You can change the banner style by going to the settings page and choosing a ban
 6. This is how the cookiebanner looks like in compact mode.
 
 == Changelog ==
+= 3.3.9 =
+Fixed logo path
+= 3.3.8 =
+Bug fixes, missing logo
+= 3.3.7 =
+General bug fixes
+= 3.3.6 =
+Added support for new languages & banner styles. General bug fixing
 = 3.3.2 =
 Added a new feature to the plugin, where you can upload or select a logo from the media library.
 = 3.3.1 =
@@ -88,17 +105,17 @@ Fixed a bug where the main script was loaded inside the admin panel and update p
 = 1.1.0 =
 Added on intro page the posibillity to add the Privacy Policy link & added on settings page the possibility to say you want start with the cookie settings page direct.
 = 1.0.2 =
-Added CCPA – California Consumer Privacy Act to the banner. It´s currently under dev and only showing the user a link to your CCPA policy.
+Added CCPA – California Consumer Privacy Act to the banner. its currently under dev and only showing the user a link to your CCPA policy.
 = 1.0.1 =
 Added a source parameter to the script to find out, wich plugin source the outgoing link is coming from.
 = 1.0 =
-Created the plugins menu as well as the settings page and the plugin in it´s self.
+Created the plugins menu as well as the settings page and the plugin in its self.
 
 == Upgrade Notice ==
 = 2.0.0 =
 In this Version we´ve redesigned the admin page for the plugin. We have categorized every thing, into: branding, intro, settings & privacy policy.
 = 1.0.2 =
-Added CCPA – California Consumer Privacy Act to the banner. It´s currently under dev and only showing the user a link to your CCPA policy.
+Added CCPA – California Consumer Privacy Act to the banner. its currently under dev and only showing the user a link to your CCPA policy.
 = 1.0.1 =
 Added a source parameter to the script to find out, wich plugin source the outgoing link is coming from.
 = 1.0 =
