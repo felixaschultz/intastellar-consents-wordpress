@@ -1,0 +1,198 @@
+# Portuguese (Portugal) translation for Intastellar Consents Solutions
+# Copyright (C) 2025 Intastellar Consents Solutions
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Intastellar Consents Solutions 3.5.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-10 00:00+0000\n"
+"PO-Revision-Date: 2025-02-10 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Portuguese\n"
+"Language: pt_PT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Manual\n"
+"X-Domain: intastellar-consents\n"
+
+msgid "Send Feedback"
+msgstr "Enviar comentários"
+
+msgid "Enjoying Intastellar Consents? Leave us a review on WordPress.org — it helps others discover the plugin."
+msgstr "Gosta do Intastellar Consents? Deixe-nos uma avaliação no WordPress.org — ajuda outros a descobrir o plugin."
+
+msgid "Leave a review"
+msgstr "Escrever uma avaliação"
+
+msgid "Open on WordPress.org"
+msgstr "Abrir no WordPress.org"
+
+msgid "Maybe later"
+msgstr "Talvez mais tarde"
+
+msgid "Leave a review on WordPress.org"
+msgstr "Escrever uma avaliação no WordPress.org"
+
+msgid "Your review helps other users and supports the plugin. Thank you!"
+msgstr "A sua avaliação ajuda outros utilizadores e apoia o plugin. Obrigado!"
+
+msgid "Open review page"
+msgstr "Abrir página de avaliações"
+
+msgid "Close"
+msgstr "Fechar"
+
+msgid "Settings"
+msgstr "Definições"
+
+msgid "Adjust your cookie banner settings here: placement, cookie notice text, fullscreen mode, and preferred language."
+msgstr "Ajuste aqui as definições do banner de cookies: posição, texto do aviso, modo ecrã inteiro e idioma preferido."
+
+msgid "Choose your banner style:"
+msgstr "Escolha o estilo do seu banner:"
+
+msgid "Placement:"
+msgstr "Posição:"
+
+msgid "Left"
+msgstr "Esquerda"
+
+msgid "Right"
+msgstr "Direita"
+
+msgid "Your Main Domain"
+msgstr "O seu domínio principal"
+
+msgid "Language:"
+msgstr "Idioma:"
+
+msgid "Auto detect"
+msgstr "Detetar automaticamente"
+
+msgid "Danish"
+msgstr "Dinamarquês"
+
+msgid "Dutch"
+msgstr "Neerlandês"
+
+msgid "English"
+msgstr "Inglês"
+
+msgid "French"
+msgstr "Francês"
+
+msgid "Finnish"
+msgstr "Finlandês"
+
+msgid "German"
+msgstr "Alemão"
+
+msgid "Italian"
+msgstr "Italiano"
+
+msgid "Norwegian"
+msgstr "Norueguês"
+
+msgid "Russian"
+msgstr "Russo"
+
+msgid "Spanish"
+msgstr "Espanhol"
+
+msgid "Swedish"
+msgstr "Sueco"
+
+msgid "Required Cookies list:"
+msgstr "Lista de cookies obrigatórios:"
+
+msgid "Enter a list of cookies that your website is required to use."
+msgstr "Introduza uma lista de cookies que o seu site é obrigado a utilizar."
+
+msgid "Example 1:"
+msgstr "Exemplo 1:"
+
+msgid "Example 2:"
+msgstr "Exemplo 2:"
+
+msgid "Display Cookie Notice text:"
+msgstr "Mostrar texto do aviso de cookies:"
+
+msgid "Yes"
+msgstr "Sim"
+
+msgid "No"
+msgstr "Não"
+
+msgid "Save changes"
+msgstr "Guardar alterações"
+
+msgid "You can also read the docs and download the newest version:"
+msgstr "Também pode ler a documentação e transferir a versão mais recente:"
+
+msgid "Intastellar GDPR cookie banner"
+msgstr "Banner de cookies GDPR Intastellar"
+
+msgid "Welcome to Intastellar Consents Solutions"
+msgstr "Bem-vindo ao Intastellar Consents Solutions"
+
+msgid "This cookie banner helps you and your website become GDPR compliant."
+msgstr "Este banner de cookies ajuda-o a si e ao seu site a cumprir o RGPD."
+
+msgid "To get started we need your Privacy Policy URL. After that you can edit the branding (brand color and logo) and in Settings configure placement, cookie notice text, and language."
+msgstr "Para começar precisamos do URL da sua Política de Privacidade. Depois pode editar a imagem (cor e logótipo) e em Definições configurar a posição, o texto do aviso e o idioma."
+
+msgid "Want to learn more? Read more at:"
+msgstr "Quer saber mais? Leia mais em:"
+
+msgid "Let's get started with your privacy policy and preferred language."
+msgstr "Vamos começar com a sua política de privacidade e idioma preferido."
+
+msgid "URL to your Privacy Policy page*:"
+msgstr "URL da sua página de Política de Privacidade*:"
+
+msgid "Open in new window"
+msgstr "Abrir numa nova janela"
+
+msgid "Intastellar Consents Solutions"
+msgstr "Intastellar Consents Solutions"
+
+msgid "Privacy Policy"
+msgstr "Política de Privacidade"
+
+msgid "Change your privacy link and choose whether to open it in a new window."
+msgstr "Altere o link da política de privacidade e escolha se deve abrir numa nova janela."
+
+msgid "Branding"
+msgstr "Imagem de marca"
+
+msgid "Customize the banner to reflect your brand identity. Change the appearance of the cookie banner using your brand color and logo."
+msgstr "Personalize o banner para refletir a sua identidade de marca. Altere o aspeto do banner de cookies com a sua cor e logótipo."
+
+msgid "Company name:"
+msgstr "Nome da empresa:"
+
+msgid "Brand Color:"
+msgstr "Cor de marca:"
+
+msgid "Company Logo:"
+msgstr "Logótipo da empresa:"
+
+msgid "Recommended: max-width 200px, min-width 100px for near-square logos."
+msgstr "Recomendado: largura máx. 200px, mín. 100px para logótipos quase quadrados."
+
+msgid "Select or Upload Logo"
+msgstr "Selecionar ou carregar logótipo"
+
+msgid "Help"
+msgstr "Ajuda"
+
+msgid "Documentation and FAQs to help you get started:"
+msgstr "Documentação e perguntas frequentes para começar:"
+
+msgid "Official Documentation"
+msgstr "Documentação oficial"
+
+msgid "Official FAQs"
+msgstr "Perguntas frequentes oficiais"

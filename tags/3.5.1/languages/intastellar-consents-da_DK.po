@@ -1,0 +1,51 @@
+# Danish translation for Intastellar Consents Solutions
+# Copyright (C) 2025 Intastellar Consents Solutions
+# This file is distributed under the same license as the plugin.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Intastellar Consents Solutions 3.4.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-01 00:00+0000\n"
+"PO-Revision-Date: 2025-01-01 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Danish\n"
+"Language: da_DK\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Manual\n"
+"X-Domain: intastellar-consents\n"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Enjoying Intastellar Consents? Leave us a review on WordPress.org — it helps others discover the plugin."
+msgstr "Kan du lide Intastellar Consents? Giv os en anmeldelse på WordPress.org — det hjælper andre med at opdage pluginet."
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Leave a review"
+msgstr "Skriv en anmeldelse"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Open on WordPress.org"
+msgstr "Åbn på WordPress.org"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Maybe later"
+msgstr "Måske senere"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Leave a review on WordPress.org"
+msgstr "Skriv en anmeldelse på WordPress.org"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Your review helps other users and supports the plugin. Thank you!"
+msgstr "Din anmeldelse hjælper andre brugere og støtter pluginet. Tak!"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Open review page"
+msgstr "Åbn anmeldelsesside"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Close"
+msgstr "Luk"

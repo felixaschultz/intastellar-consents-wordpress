@@ -1,0 +1,258 @@
+# Danish translation for Intastellar Consents Solutions
+# Copyright (C) 2025 Intastellar Consents Solutions
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Intastellar Consents Solutions 3.5.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-10 00:00+0000\n"
+"PO-Revision-Date: 2025-02-10 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Danish\n"
+"Language: da_DK\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Manual\n"
+"X-Domain: intastellar-consents\n"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Send Feedback"
+msgstr "Send feedback"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Enjoying Intastellar Consents? Leave us a review on WordPress.org — it helps others discover the plugin."
+msgstr "Kan du lide Intastellar Consents? Giv os en anmeldelse på WordPress.org — det hjælper andre med at opdage pluginet."
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Leave a review"
+msgstr "Skriv en anmeldelse"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Open on WordPress.org"
+msgstr "Åbn på WordPress.org"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Maybe later"
+msgstr "Måske senere"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Leave a review on WordPress.org"
+msgstr "Skriv en anmeldelse på WordPress.org"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Your review helps other users and supports the plugin. Thank you!"
+msgstr "Din anmeldelse hjælper andre brugere og støtter pluginet. Tak!"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Open review page"
+msgstr "Åbn anmeldelsesside"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Close"
+msgstr "Luk"
+
+#: includes/int-functions.php
+msgid "Settings"
+msgstr "Indstillinger"
+
+#: includes/int-functions.php
+msgid "Adjust your cookie banner settings here: placement, cookie notice text, fullscreen mode, and preferred language."
+msgstr "Juster dine cookiebanner-indstillinger her: placering, cookiebeskedtekst, fuldskærmstilstand og foretrukket sprog."
+
+#: includes/int-functions.php
+msgid "Choose your banner style:"
+msgstr "Vælg din bannerstil:"
+
+#: includes/int-functions.php
+msgid "Placement:"
+msgstr "Placering:"
+
+#: includes/int-functions.php
+msgid "Left"
+msgstr "Venstre"
+
+#: includes/int-functions.php
+msgid "Right"
+msgstr "Højre"
+
+#: includes/int-functions.php
+msgid "Your Main Domain"
+msgstr "Dit hoveddomæne"
+
+#: includes/int-functions.php
+msgid "Language:"
+msgstr "Sprog:"
+
+#: includes/int-functions.php
+msgid "Auto detect"
+msgstr "Auto-detekter"
+
+#: includes/int-functions.php
+msgid "Danish"
+msgstr "Dansk"
+
+#: includes/int-functions.php
+msgid "Dutch"
+msgstr "Hollandsk"
+
+#: includes/int-functions.php
+msgid "English"
+msgstr "Engelsk"
+
+#: includes/int-functions.php
+msgid "French"
+msgstr "Fransk"
+
+#: includes/int-functions.php
+msgid "Finnish"
+msgstr "Finsk"
+
+#: includes/int-functions.php
+msgid "German"
+msgstr "Tysk"
+
+#: includes/int-functions.php
+msgid "Italian"
+msgstr "Italiensk"
+
+#: includes/int-functions.php
+msgid "Norwegian"
+msgstr "Norsk"
+
+#: includes/int-functions.php
+msgid "Russian"
+msgstr "Russisk"
+
+#: includes/int-functions.php
+msgid "Spanish"
+msgstr "Spansk"
+
+#: includes/int-functions.php
+msgid "Swedish"
+msgstr "Svensk"
+
+#: includes/int-functions.php
+msgid "Required Cookies list:"
+msgstr "Liste over påkrævede cookies:"
+
+#: includes/int-functions.php
+msgid "Enter a list of cookies that your website is required to use."
+msgstr "Angiv en liste over cookies, som dit websted er forpligtet til at bruge."
+
+#: includes/int-functions.php
+msgid "Example 1:"
+msgstr "Eksempel 1:"
+
+#: includes/int-functions.php
+msgid "Example 2:"
+msgstr "Eksempel 2:"
+
+#: includes/int-functions.php
+msgid "Display Cookie Notice text:"
+msgstr "Vis cookiebeskedtekst:"
+
+#: includes/int-functions.php
+msgid "Yes"
+msgstr "Ja"
+
+#: includes/int-functions.php
+msgid "No"
+msgstr "Nej"
+
+#: includes/int-functions.php
+msgid "Save changes"
+msgstr "Gem ændringer"
+
+#: includes/int-functions.php
+msgid "You can also read the docs and download the newest version:"
+msgstr "Du kan også læse dokumentationen og downloade den nyeste version:"
+
+#: includes/int-functions.php
+msgid "Intastellar GDPR cookie banner"
+msgstr "Intastellar GDPR cookiebanner"
+
+#: includes/int-functions.php
+msgid "Welcome to Intastellar Consents Solutions"
+msgstr "Velkommen til Intastellar Consents Solutions"
+
+#: includes/int-functions.php
+msgid "This cookie banner helps you and your website become GDPR compliant."
+msgstr "Dette cookiebanner hjælper dig og dit websted med at blive GDPR-overensstemmende."
+
+#: includes/int-functions.php
+msgid "To get started we need your Privacy Policy URL. After that you can edit the branding (brand color and logo) and in Settings configure placement, cookie notice text, and language."
+msgstr "For at komme i gang har vi brug for URL'en til din privatlivspolitik. Derefter kan du redigere branding (brandfarve og logo) og under Indstillinger konfigurere placering, cookiebeskedtekst og sprog."
+
+#: includes/int-functions.php
+msgid "Want to learn more? Read more at:"
+msgstr "Vil du vide mere? Læs mere på:"
+
+#: includes/int-functions.php
+msgid "Let's get started with your privacy policy and preferred language."
+msgstr "Lad os komme i gang med din privatlivspolitik og foretrukket sprog."
+
+#: includes/int-functions.php
+msgid "URL to your Privacy Policy page*:"
+msgstr "URL til din side med privatlivspolitik*:"
+
+#: includes/int-functions.php
+msgid "Open in new window"
+msgstr "Åbn i nyt vindue"
+
+#: includes/int-functions.php
+msgid "Intastellar Consents Solutions"
+msgstr "Intastellar Consents Solutions"
+
+#: includes/int-functions.php
+msgid "Privacy Policy"
+msgstr "Privatlivspolitik"
+
+#: includes/int-functions.php
+msgid "Change your privacy link and choose whether to open it in a new window."
+msgstr "Ændr dit link til privatlivspolitikken og vælg, om det skal åbnes i et nyt vindue."
+
+#: includes/int-functions.php
+msgid "Branding"
+msgstr "Branding"
+
+#: includes/int-functions.php
+msgid "Customize the banner to reflect your brand identity. Change the appearance of the cookie banner using your brand color and logo."
+msgstr "Tilpas banneret så det afspejler din brandidentitet. Ændr udseendet af cookiebanneret med din brandfarve og logo."
+
+#: includes/int-functions.php
+msgid "Company name:"
+msgstr "Firmanavn:"
+
+#: includes/int-functions.php
+msgid "Brand Color:"
+msgstr "Brandfarve:"
+
+#: includes/int-functions.php
+msgid "Company Logo:"
+msgstr "Firmalogo:"
+
+#: includes/int-functions.php
+msgid "Recommended: max-width 200px, min-width 100px for near-square logos."
+msgstr "Anbefales: max. bredde 200px, min. bredde 100px for næsten firkantede logoer."
+
+#: includes/int-functions.php
+msgid "Select or Upload Logo"
+msgstr "Vælg eller upload logo"
+
+#: includes/int-functions.php
+msgid "Help"
+msgstr "Hjælp"
+
+#: includes/int-functions.php
+msgid "Documentation and FAQs to help you get started:"
+msgstr "Dokumentation og ofte stillede spørgsmål for at komme i gang:"
+
+#: includes/int-functions.php
+msgid "Official Documentation"
+msgstr "Officiel dokumentation"
+
+#: includes/int-functions.php
+msgid "Official FAQs"
+msgstr "Officielle ofte stillede spørgsmål"

@@ -1,0 +1,920 @@
+<?php
+if (! defined('ABSPATH')) exit;
+require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+
+// get the plugin version
+$plugin_data = get_plugin_data(__FILE__);
+$plugin_version = $plugin_data['Version'];
+
+function intastellarSettingsRegistration()
+{
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarCustomIcon', array(
+        'type' => 'string',
+        'sanitize_callback' => 'esc_url',
+    ));
+
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarCookieBannerColor', array(
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_hex_color',
+    ));
+
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarCookieBannerBrandName', array(
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarPrivacyLink', array(
+        'type' => 'string',
+        'sanitize_callback' => 'esc_url',
+    ));
+
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarPrivacyLinkCheckbox', array(
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarSetCookiePosition', array(
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarDisplayCookieNoticeText', array(
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarSelectLanguage', array(
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarCCPA', array(
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarCCPAUrl', array(
+        'type' => 'string',
+        'sanitize_callback' => 'esc_url',
+    ));
+
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarDisplayCookieAdvenced', array(
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarCCPAcollection', array(
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarCookieList', array(
+        'type' => 'string',
+        'sanitize_callback' => 'wp_kses_post',
+    ));
+
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarSiteRoot', array(
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarBannerStyle', array(
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+
+    register_setting('intastellar-consents_plugin_options-group', 'intastellarPluginVersion', array(
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_text_field',
+        'default' => '3.3.7'
+    ));
+}
+
+/**
+ * One-time migration: set activation timestamp for sites that were updated
+ * (activation hook does not run on update, so the option was never set).
+ */
+function intastellar_maybe_set_activation_timestamp()
+{
+    if (get_option('intastellar_plugin_activated_at')) {
+        return;
+    }
+    // Set to 8 days ago so the review prompt shows immediately for existing installs.
+    update_option('intastellar_plugin_activated_at', time() - (8 * DAY_IN_SECONDS));
+}
+add_action('admin_init', 'intastellar_maybe_set_activation_timestamp', 0);
+
+/**
+ * Redirect to plugin Intro page after activation and show success message.
+ */
+function intastellar_activation_redirect()
+{
+    if (! get_transient('intastellar_activation_redirect')) {
+        return;
+    }
+    if (isset($_GET['activate-multi'])) {
+        delete_transient('intastellar_activation_redirect');
+        return;
+    }
+    delete_transient('intastellar_activation_redirect');
+    wp_safe_redirect(admin_url('admin.php?page=intastellar-consents&intastellar_activated=1'));
+    exit;
+}
+add_action('admin_init', 'intastellar_activation_redirect', 1);
+
+/**
+ * Show success notice after activation: "Successful activation. Please add your privacy policy."
+ */
+function intastellar_activation_success_notice()
+{
+    $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+    if (! $screen || strpos($screen->id, 'intastellar-consents') === false) {
+        return;
+    }
+    if (! isset($_GET['intastellar_activated']) || $_GET['intastellar_activated'] !== '1') {
+        return;
+    }
+    $message = __('Successful activation. Please add your privacy policy.', 'intastellar-consents');
+    printf(
+        '<div class="notice notice-success is-dismissible"><p>%s</p></div>',
+        esc_html($message)
+    );
+}
+add_action('admin_notices', 'intastellar_activation_success_notice');
+
+/**
+ * Whether a valid privacy policy URL is configured.
+ */
+function intastellar_has_valid_privacy_policy()
+{
+    $url = get_option('intastellarPrivacyLink');
+    if (! is_string($url) || trim($url) === '') {
+        return false;
+    }
+    return esc_url_raw(trim($url)) !== '';
+}
+
+/**
+ * Show "Your site is now GDPR compliant" when a valid privacy policy is set.
+ * Shown across the admin (including dashboard) when the user is logged in.
+ */
+function intastellar_gdpr_compliant_notice()
+{
+    if (! is_user_logged_in()) {
+        return;
+    }
+    if (! intastellar_has_valid_privacy_policy()) {
+        return;
+    }
+    $site_url = home_url('/');
+    $link_text = __('View your site', 'intastellar-consents');
+    $link = sprintf(
+        '<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
+        esc_url($site_url),
+        esc_html($link_text)
+    );
+    $message = sprintf(
+        /* translators: %s: link to the front-end of the site */
+        __('Your site is now GDPR compliant. %s to see the banner.', 'intastellar-consents'),
+        $link
+    );
+    printf(
+        '<div class="notice notice-success is-dismissible"><p>%s</p></div>',
+        wp_kses($message, array('a' => array('href' => array(), 'target' => array(), 'rel' => array())))
+    );
+}
+add_action('admin_notices', 'intastellar_gdpr_compliant_notice');
+
+/**
+ * Build the GDPR compliant message HTML (shared by notice and dashboard widget).
+ */
+function intastellar_gdpr_compliant_message_html()
+{
+    $site_url = home_url('/');
+    $link_text = __('View your site', 'intastellar-consents');
+    $link = sprintf(
+        '<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
+        esc_url($site_url),
+        esc_html($link_text)
+    );
+    return sprintf(
+        /* translators: %s: link to the front-end of the site */
+        __('Consent setup complete. Banner is active on the front-end.', 'intastellar-consents'),
+        $link
+    );
+}
+
+/**
+ * Dashboard widget: show Intastellar Consents status, privacy link, and link to plugin settings.
+ */
+function intastellar_dashboard_widget_render()
+{
+    if (! is_user_logged_in() || ! current_user_can('manage_options')) {
+        return;
+    }
+
+    $settings_url = admin_url('admin.php?page=intastellar-consents');
+    $privacy_url  = admin_url('admin.php?page=intastellar-consents/privacy');
+    if (! function_exists('is_plugin_active')) {
+        include_once ABSPATH . 'wp-admin/includes/plugin.php';
+    }
+    $main_file    = dirname(dirname(__FILE__)) . '/intastellar-consents.php';
+    $plugin_active = file_exists($main_file) && is_plugin_active(plugin_basename($main_file));
+    $privacy_set   = intastellar_has_valid_privacy_policy();
+    $allowed_a    = array('a' => array('href' => array(), 'target' => array(), 'rel' => array()));
+
+    // Domain (compute early for grid)
+    $detected_domain   = wp_parse_url(home_url(), PHP_URL_HOST);
+    $configured_domain = is_string(get_option('intastellarSiteRoot')) ? trim(get_option('intastellarSiteRoot')) : '';
+    if ($configured_domain !== '') {
+        $configured_domain = preg_replace('#^https?://#i', '', $configured_domain);
+        $configured_domain = trim($configured_domain, "/ \t\n\r");
+    }
+    $detected_normalized   = $detected_domain ? strtolower($detected_domain) : '';
+    $configured_normalized = $configured_domain !== '' ? strtolower($configured_domain) : $detected_normalized;
+    $domains_match         = ($detected_normalized === $configured_normalized);
+    $display_configured    = $configured_domain !== '' ? $configured_domain : ($detected_domain ? $detected_domain : '—');
+
+    // Language / locale
+    $locale_to_key = array(
+        'da_DK' => 'danish', 'da' => 'danish',
+        'en_US' => 'english', 'en_GB' => 'english', 'en' => 'english',
+        'de_DE' => 'german', 'de' => 'german',
+        'fr_FR' => 'french', 'fr' => 'french',
+        'nl_NL' => 'dutch', 'nl' => 'dutch',
+        'fi_FI' => 'finnish', 'fi' => 'finnish',
+        'it_IT' => 'italian', 'it' => 'italian',
+        'nb_NO' => 'norwegian', 'nn_NO' => 'norwegian', 'no' => 'norwegian',
+        'ru_RU' => 'russian', 'ru' => 'russian',
+        'es_ES' => 'spanish', 'es' => 'spanish',
+        'sv_SE' => 'swedish', 'sv' => 'swedish',
+    );
+    $key_to_label = array(
+        'danish' => __('Danish', 'intastellar-consents'),
+        'dutch' => __('Dutch', 'intastellar-consents'),
+        'english' => __('English', 'intastellar-consents'),
+        'finnish' => __('Finnish', 'intastellar-consents'),
+        'french' => __('French', 'intastellar-consents'),
+        'german' => __('German', 'intastellar-consents'),
+        'italian' => __('Italian', 'intastellar-consents'),
+        'norwegian' => __('Norwegian', 'intastellar-consents'),
+        'russian' => __('Russian', 'intastellar-consents'),
+        'spanish' => __('Spanish', 'intastellar-consents'),
+        'swedish' => __('Swedish', 'intastellar-consents'),
+    );
+    $site_locale   = get_locale();
+    $site_lang_key = isset($locale_to_key[ $site_locale ]) ? $locale_to_key[ $site_locale ] : (isset($locale_to_key[ substr($site_locale, 0, 2) ]) ? $locale_to_key[ substr($site_locale, 0, 2) ] : '');
+    $site_lang_label = isset($key_to_label[ $site_lang_key ]) ? $key_to_label[ $site_lang_key ] : $site_locale;
+    $banner_lang   = is_string(get_option('intastellarSelectLanguage')) ? trim(strtolower(get_option('intastellarSelectLanguage'))) : 'auto';
+    $banner_label  = $banner_lang === 'auto' ? $site_lang_label . ' (' . __('auto', 'intastellar-consents') . ')' : (isset($key_to_label[ $banner_lang ]) ? $key_to_label[ $banner_lang ] : $banner_lang);
+    $langs_match   = ($banner_lang === 'auto') || ($site_lang_key !== '' && $banner_lang === $site_lang_key);
+
+    echo '<div class="intastellar-dashboard-widget">';
+
+    // Highlighted grid: Privacy policy link, Banner on front-end, Detected domain
+    echo '<div class="intastellar-dashboard-widget__grid">';
+    $privacy_value = $privacy_set ? __('Set', 'intastellar-consents') : __('Missing', 'intastellar-consents');
+    $privacy_state = $privacy_set ? 'intastellar-dashboard-widget__card--ok' : 'intastellar-dashboard-widget__card--warning';
+    echo '<div class="intastellar-dashboard-widget__card ' . esc_attr($privacy_state) . '">';
+    echo '<span class="intastellar-dashboard-widget__card-label">' . esc_html__('Privacy policy link', 'intastellar-consents') . '</span>';
+    echo '<span class="intastellar-dashboard-widget__card-value">' . esc_html($privacy_value) . '</span>';
+    echo '</div>';
+    $banner_value = $plugin_active ? __('Active', 'intastellar-consents') : __('Inactive', 'intastellar-consents');
+    $banner_state = $plugin_active ? 'intastellar-dashboard-widget__card--ok' : 'intastellar-dashboard-widget__card--warning';
+    echo '<div class="intastellar-dashboard-widget__card ' . esc_attr($banner_state) . '">';
+    echo '<span class="intastellar-dashboard-widget__card-label">' . esc_html__('Banner on front-end', 'intastellar-consents') . '</span>';
+    echo '<span class="intastellar-dashboard-widget__card-value">' . esc_html($banner_value) . '</span>';
+    echo '</div>';
+    $domain_mismatch = ($detected_normalized !== '' && $configured_domain !== '' && ! $domains_match);
+    $domain_value = $detected_domain ? $detected_domain : '—';
+    $domain_state = $domain_mismatch ? 'intastellar-dashboard-widget__card--error' : 'intastellar-dashboard-widget__card--ok';
+    echo '<div class="intastellar-dashboard-widget__card ' . esc_attr($domain_state) . '">';
+    echo '<span class="intastellar-dashboard-widget__card-label">' . esc_html__('Detected domain', 'intastellar-consents') . '</span>';
+    echo '<span class="intastellar-dashboard-widget__card-value">' . esc_html($domain_value) . '</span>';
+    echo '</div>';
+    echo '</div>';
+
+    // Domain match verdict (the big one for GDPR)
+    if ($domain_mismatch) {
+        echo '<p class="intastellar-dashboard-widget__verdict intastellar-dashboard-widget__verdict--error">';
+        echo '&#x26A0;&#xFE0F; ' . esc_html__('Domain mismatch detected', 'intastellar-consents');
+        echo '</p>';
+        echo '<p class="intastellar-dashboard-widget__verdict-note">' . esc_html__('Banner may not load or consent may be invalid.', 'intastellar-consents') . '</p>';
+    } else {
+        echo '<p class="intastellar-dashboard-widget__verdict intastellar-dashboard-widget__verdict--ok">';
+        echo '&#x2705; ' . esc_html__('Domain match: OK', 'intastellar-consents');
+        echo '</p>';
+    }
+
+    // Consent signal (e.g. Google Consent Mode v2)
+    $consent_signal_label = __('Consent signal: Google Consent Mode v2 (Active)', 'intastellar-consents');
+    echo '<p class="intastellar-dashboard-widget__meta-line">' . esc_html($consent_signal_label) . '</p>';
+
+    echo '<div class="intastellar-dashboard-widget__meta">';
+    echo '<p class="intastellar-dashboard-widget__meta-line">' . esc_html__('Configured domain:', 'intastellar-consents') . ' <code>' . esc_html($display_configured) . '</code></p>';
+    echo '<p class="intastellar-dashboard-widget__meta-note">' . esc_html__('CMPs quietly fail when domains mismatch.', 'intastellar-consents') . '</p>';
+    echo '<p class="intastellar-dashboard-widget__meta-note">' . esc_html__('This matters in the EU more than people admit.', 'intastellar-consents') . '</p>';
+    echo '<p class="intastellar-dashboard-widget__meta-line">' . esc_html__('Banner language:', 'intastellar-consents') . ' <code>' . esc_html($banner_label) . '</code> · ' . esc_html__('Site language:', 'intastellar-consents') . ' <code>' . esc_html($site_lang_label) . '</code></p>';
+    echo '</div>';
+
+    if ($domain_mismatch) {
+        echo '<p class="intastellar-widget-warning">' . esc_html__('Update the configured domain in Settings. Regulators treat domain mismatches as a serious compliance issue.', 'intastellar-consents') . '</p>';
+    }
+    if (! $langs_match && $banner_lang !== 'auto' && $site_lang_key !== '') {
+        echo '<p class="intastellar-widget-warning">' . esc_html__('Banner and site language differ — consider matching them for EU compliance.', 'intastellar-consents') . '</p>';
+    }
+
+    if (!$privacy_set) {
+        echo '<p class="intastellar-dashboard-widget__message">' . esc_html__('Add a privacy policy URL in the Privacy tab to improve compliance.', 'intastellar-consents') . '</p>';
+    }
+
+    echo '<p class="intastellar-dashboard-widget__actions">';
+    printf('<a href="%s" class="button button-primary">%s</a> ', esc_url($settings_url), esc_html__('Open plugin settings', 'intastellar-consents'));
+    printf('<a href="%s" class="button" target="_blank" rel="noopener noreferrer">%s</a> ', esc_url(home_url('/')), esc_html__('View banner on site', 'intastellar-consents'));
+    if (! $privacy_set) {
+        printf('<a href="%s">%s</a>', esc_url($privacy_url), esc_html__('Add privacy link', 'intastellar-consents'));
+    }
+    echo '</p>';
+
+    echo '<div class="intastellar-dashboard-widget__footer">';
+    echo '<a href="https://developers.intastellarsolutions.com/cookie-solutions/docs/wordpress-docs" target="_blank" rel="noopener noreferrer">' . esc_html__('Documentation', 'intastellar-consents') . '</a>';
+    echo ' <span class="intastellar-dashboard-widget__footer-sep">·</span> ';
+    echo '<a href="https://www.intastellarsolutions.com/solutions/cookie-consents" target="_blank" rel="noopener noreferrer">' . esc_html__('Intastellar Consents', 'intastellar-consents') . '</a>';
+    echo '</div>';
+
+    echo '</div>';
+}
+
+function intastellar_add_dashboard_widget()
+{
+    if (! current_user_can('manage_options')) {
+        return;
+    }
+    wp_add_dashboard_widget(
+        'intastellar_gdpr_compliant',
+        __('Consent Status', 'intastellar-consents'),
+        'intastellar_dashboard_widget_render',
+        null,
+        null,
+        'side'
+    );
+}
+add_action('wp_dashboard_setup', 'intastellar_add_dashboard_widget');
+
+/**
+ * Inline SVG icon for the dashboard widget (unique gradient IDs to avoid clashes).
+ */
+function intastellar_get_widget_icon_svg()
+{
+    $svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:serif="http://www.serif.com/" width="100%" height="100%" viewBox="0 0 3563 1949" version="1.1" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><g id="Layer_4"><path d="M2684.92,519.042c-0,124.125 -93.125,226.5 -213.292,241.083c-51.917,-127.708 -146.042,-233.75 -265,-300.792c26.583,-105.25 121.917,-183.125 235.458,-183.125c134.125,0 242.875,108.709 242.875,242.875l-0.041,-0.041Z" style="fill:#798085;fill-rule:nonzero;"/><path d="M1792.17,1351.62c-175.334,-60.667 -350.167,-126.417 -516.5,-193.833c59.291,273.25 302.416,477.958 593.416,477.958c148.792,0 285.042,-53.542 390.625,-142.333c-138.666,-35.125 -292.208,-81.125 -467.541,-141.792Z" style="fill:url(#intastellar_widget_linear1);fill-rule:nonzero;"/><path d="M1324.88,776.125c228.75,111.25 788.25,301.375 1139.54,372.583c7.791,-38.875 11.916,-79.083 11.916,-120.25c0,-335.375 -271.875,-607.291 -607.291,-607.291c-244.084,-0 -454.459,144 -550.959,351.666c2.25,1.084 4.5,2.209 6.792,3.334l0,-0.042Z" style="fill:url(#intastellar_widget_linear2);fill-rule:nonzero;"/><path d="M2812.04,1406.25c-97.125,-11.542 -552.042,-107.625 -996.084,-256.5c-304,-101.917 -622.083,-244.167 -828.75,-338.958c-371.416,-170.375 -486.541,-322.709 -189.291,-271.209c209.916,36.375 373.708,82.292 373.708,82.292c-0,0 -381.958,-82.792 -37.583,117.958c257.833,150.292 1249.83,447.125 1557.04,485.75c189.167,23.75 -53.333,-115.625 -53.333,-115.625c0,0 959.125,389.417 174.375,296.25l-0.083,0.042Z" style="fill:url(#intastellar_widget_linear3);fill-rule:nonzero;"/><path d="M115.333,424.5c189.167,-28.417 902.667,133.708 902.667,133.708c0,0 -844.167,-166.416 -303.75,148.917c215.833,125.958 665.833,332.458 1121.71,475.25c621.792,194.75 1094.38,298.792 1284.75,287.708c292.75,-17 -355.041,-314.5 -355.041,-314.5c-0,0 1494.17,549.042 389.625,472.917c-337.375,-23.25 -793.5,-109.375 -1356.58,-309.417c-1022,-363.041 -2170.12,-821.5 -1683.38,-894.583Z" style="fill:url(#intastellar_widget_linear4);fill-rule:nonzero;"/></g><defs><linearGradient id="intastellar_widget_linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1962.29,291.5,-291.5,1962.29,1241,1350.92)"><stop offset="0" style="stop-color:#bf9d4f;stop-opacity:1"/><stop offset="0.65" style="stop-color:#8c7230;stop-opacity:1"/><stop offset="1" style="stop-color:#766023;stop-opacity:1"/></linearGradient><linearGradient id="intastellar_widget_linear2" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(634663,59229.2,-59229.2,634663,370580,115140)"><stop offset="0" style="stop-color:#bf9d4f;stop-opacity:1"/><stop offset="0.65" style="stop-color:#8c7230;stop-opacity:1"/><stop offset="1" style="stop-color:#766023;stop-opacity:1"/></linearGradient><linearGradient id="intastellar_widget_linear3" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(2941.12,1124.68,-1124.68,2941.12,391.077,430.965)"><stop offset="0" style="stop-color:#bb994c;stop-opacity:1"/><stop offset="0.32" style="stop-color:#b8964a;stop-opacity:1"/><stop offset="0.52" style="stop-color:#af8f44;stop-opacity:1"/><stop offset="0.69" style="stop-color:#a0833b;stop-opacity:1"/><stop offset="0.84" style="stop-color:#8c722d;stop-opacity:1"/><stop offset="0.91" style="stop-color:#806826;stop-opacity:1"/><stop offset="1" style="stop-color:#7a6424;stop-opacity:1"/></linearGradient><linearGradient id="intastellar_widget_linear4" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(2823.25,1150.89,-1150.89,2823.25,392.979,481.144)"><stop offset="0" style="stop-color:#b7974a;stop-opacity:1"/><stop offset="0.13" style="stop-color:#b19144;stop-opacity:1"/><stop offset="0.64" style="stop-color:#a07e32;stop-opacity:1"/><stop offset="1" style="stop-color:#9a782c;stop-opacity:1"/></linearGradient></defs></svg>';
+    return $svg;
+}
+
+/**
+ * Enqueue script on dashboard to show the icon beside the widget title.
+ */
+function intastellar_dashboard_widget_icon_script()
+{
+    $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+    if (! $screen || $screen->id !== 'dashboard' || ! current_user_can('manage_options')) {
+        return;
+    }
+    wp_localize_script('jquery', 'intastellarDashboardWidget', array(
+        'iconSvg' => intastellar_get_widget_icon_svg(),
+    ));
+    $script = "document.addEventListener('DOMContentLoaded', function() {\n"
+        . "  var h = document.querySelector('#intastellar_gdpr_compliant .hndle');\n"
+        . "  if (h && typeof intastellarDashboardWidget !== 'undefined' && intastellarDashboardWidget.iconSvg) {\n"
+        . "    var wrap = document.createElement('span');\n"
+        . "    wrap.style.display = 'inline-block';\n"
+        . "    wrap.style.width = '20px';\n"
+        . "    wrap.style.height = '20px';\n"
+        . "    wrap.style.marginRight = '6px';\n"
+        . "    wrap.style.verticalAlign = 'middle';\n"
+        . "    wrap.style.overflow = 'hidden';\n"
+        . "    wrap.innerHTML = intastellarDashboardWidget.iconSvg;\n"
+        . "    h.insertBefore(wrap, h.firstChild);\n"
+        . "  }\n"
+        . "});\n";
+    wp_add_inline_script('jquery', $script, 'after');
+}
+add_action('admin_enqueue_scripts', 'intastellar_dashboard_widget_icon_script');
+
+/**
+ * SVG icon used in the admin menu and dashboard widget (base64 data URL).
+ */
+function intastellar_get_menu_icon_url()
+{
+    return 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4bWxuczpzZXJpZj0iaHR0cDovL3d3dy5zZXJpZi5jb20vIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMzU2MyAxOTQ5IiB2ZXJzaW9uPSIxLjEiIHhtbDpzcGFjZT0icHJlc2VydmUiIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6MjsiPjxnIGlkPSJMYXllcl80Ij48cGF0aCBkPSJNMjY4NC45Miw1MTkuMDQyYy0wLDEyNC4xMjUgLTkzLjEyNSwyMjYuNSAtMjEzLjI5MiwyNDEuMDgzYy01MS45MTcsLTEyNy43MDggLTE0Ni4wNDIsLTIzMy43NSAtMjY1LC0zMDAuNzkyYzI2LjU4MywtMTA1LjI1IDEyMS45MTcsLTE4My4xMjUgMjM1LjQ1OCwtMTgzLjEyNWMxMzQuMTI1LDAgMjQyLjg3NSwxMDguNzA5IDI0Mi44NzUsMjQyLjg3NWwtMC4wNDEsLTAuMDQxWiIgc3R5bGU9ImZpbGw6Izc5ODA4NTtmaWxsLXJ1bGU6bm9uemVybzsiLz48cGF0aCBkPSJNMTc5Mi4xNywxMzUxLjYyYy0xNzUuMzM0LC02MC42NjcgLTM1MC4xNjcsLTEyNi40MTcgLTUxNi41LC0xOTMuODMzYzU5LjI5MSwyNzMuMjUgMzAyLjQxNiw0NzcuOTU4IDU5My40MTYsNDc3Ljk1OGMxNDguNzkyLDAgMjg1LjA0MiwtNTMuNTQyIDM5MC42MjUsLTE0Mi4zMzNjLTEzOC42NjYsLTM1LjEyNSAtMjkyLjIwOCwtODEuMTI1IC00NjcuNTQxLC0xNDEuNzkyWiIgc3R5bGU9ImZpbGw6dXJsKCNfTGluZWFyMSk7ZmlsbC1ydWxlOm5vbnplcm87Ii8+PHBhdGggZD0iTTEzMjQuODgsNzc2LjEyNWMyMjguNzUsMTExLjI1IDc4OC4yNSwzMDEuMzc1IDExMzkuNTQsMzcyLjU4M2M3Ljc5MSwtMzguODc1IDExLjkxNiwtNzkuMDgzIDExLjkxNiwtMTIwLjI1YzAsLTMzNS4zNzUgLTI3MS44NzUsLTYwNy4yOTEgLTYwNy4yOTEsLTYwNy4yOTFjLTI0NC4wODQsLTAgLTQ1NC40NTksMTQ0IC01NTAuOTU5LDM1MS42NjZjMi4yNSwxLjA4NCA0LjUsMi4yMDkgNi43OTIsMy4zMzRsMCwtMC4wNDJaIiBzdHlsZT0iZmlsbDp1cmwoI19MaW5lYXI0KTtmaWxsLXJ1bGU6bm9uemVybzsiLz48cGF0aCBkPSJNMjgxMi4wNCwxNDA2LjI1Yy05Ny4xMjUsLTExLjU0MiAtNTUyLjA0MiwtMTA3LjYyNSAtOTk2LjA4NCwtMjU2LjVjLTMwNCwtMTAxLjkxNyAtNjIyLjA4MywtMjQ0LjE2NyAtODI4Ljc1LC0zMzguOTU4Yy0zNzEuNDE2LC0xNzAuMzc1IC00ODYuNTQxLC0zMjIuNzA5IC0xODkuMjkxLC0yNzEuMjA5YzIwOS45MTYsMzYuMzc1IDM3My43MDgsODIuMjkyIDM3My43MDgsODIuMjkyYy0wLDAgLTM4MS45NTgsLTgyLjc5MiAtMzcuNTgzLDExNy45NThjMjU3LjgzMywxNTAuMjkyIDEyNDkuODMsNDQ3LjEyNSAxNTU3LjA0LDQ4NS43NWMxODkuMTY3LDIzLjc1IC01My4zMzMsLTExNS42MjUgLTUzLjMzMywtMTE1LjYyNWMwLDAgOTU5LjEyNSwzODkuNDE3IDE3NC4zNzUsMjk2LjI1bC0wLjA4MywwLjA0MloiIHN0eWxlPSJmaWxsOnVybCgjX0xpbmVhcjMpO2ZpbGwtcnVsZTpub256ZXJvOyIvPjxwYXRoIGQ9Ik0xMTUuMzMzLDQyNC41YzE4OS4xNjcsLTI4LjQxNyA5MDIuNjY3LDEzMy43MDggOTAyLjY2NywxMzMuNzA4YzAsMCAtODQ0LjE2NywtMTY2LjQxNiAtMzAzLjc1LDE0OC45MTdjMjE1LjgzMywxMjUuOTU4IDY2NS44MzMsMzMyLjQ1OCAxMTIxLjcxLDQ3NS4yNWM2MjEuNzkyLDE5NC43NSAxMDk0LjM4LDI5OC43OTIgMTI4NC43NSwyODcuNzA4YzI5Mi43NSwtMTcgLTM1NS4wNDEsLTMxNC41IC0zNTUuMDQxLC0zMTQuNWMtMCwwIDE0OTQuMTcsNTQ5LjA0MiAzODkuNjI1LDQ3Mi45MTdjLTMzNy4zNzUsLTIzLjI1IC03OTMuNSwtMTA5LjM3NSAtMTM1Ni41OCwtMzA5LjQxN2MtMTAyMiwtMzYzLjA0MSAtMjE3MC4xMiwtODIxLjUgLTE2ODMuMzgsLTg5NC41ODNaIiBzdHlsZT0iZmlsbDp1cmwoI19MaW5lYXI0KTtmaWxsLXJ1bGU6bm9uemVybzsiLz48L2c+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJfTGluZWFyMSIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiBncmFkaWVudFRyYW5zZm9ybT0ibWF0cml4KDE5NjIuMjksMjkxLjUsLTI5MS41LDE5NjIuMjksMTI0MSwxMzUwLjkyKSI+PHN0b3Agb2Zmc2V0PSIwIiBzdHlsZT0ic3RvcC1jb2xvcjojYmY5ZDRmO3N0b3Atb3BhY2l0eToxIi8+PHN0b3Agb2Zmc2V0PSIwLjY1IiBzdHlsZT0ic3RvcC1jb2xvcjojOGM3MjMwO3N0b3Atb3BhY2l0eToxIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdHlsZT0ic3RvcC1jb2xvcjojNzY2MDIzO3N0b3Atb3BhY2l0eToxIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9Il9MaW5lYXIyIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIGdyYWRpZW50VHJhbnNmb3JtPSJtYXRyaXgoNjM0NjYzLDU5MjI5LjIsLTU5MjI5LjIsNjM0NjYzLDM3MDU4MCwxMTUxNDApIj48c3RvcCBvZmZzZXQ9IjAiIHN0eWxlPSJzdG9wLWNvbG9yOiNiZjlkNGY7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjAuNjUiIHN0eWxlPSJzdG9wLWNvbG9yOiM4YzcyMzA7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0eWxlPSJzdG9wLWNvbG9yOiM3NjYwMjM7c3RvcC1vcGFjaXR5OjEiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBpZD0iX0xpbmVhcjMiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIwIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgZ3JhZGllbnRUcmFuc2Zvcm09Im1hdHJpeCgyOTQxLjEyLDExMjQuNjgsLTExMjQuNjgsMjk0MS4xMiwzOTEuMDc3LDQzMC45NjUpIj48c3RvcCBvZmZzZXQ9IjAiIHN0eWxlPSJzdG9wLWNvbG9yOiNiYjk5NGM7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjAuMzIiIHN0eWxlPSJzdG9wLWNvbG9yOiNiODk2NGE7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjAuNTIiIHN0eWxlPSJzdG9wLWNvbG9yOiNhZjhmNDQ7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjAuNjkiIHN0eWxlPSJzdG9wLWNvbG9yOiNhMDgzM2I7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjAuODQiIHN0eWxlPSJzdG9wLWNvbG9yOiM4YzcyMmQ7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjAuOTEiIHN0eWxlPSJzdG9wLWNvbG9yOiM4MDY4MjY7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0eWxlPSJzdG9wLWNvbG9yOiM3YTY0MjQ7c3RvcC1vcGFjaXR5OjEiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBpZD0iX0xpbmVhcjQiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIwIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgZ3JhZGllbnRUcmFuc2Zvcm09Im1hdHJpeCgyODIzLjI1LDExNTAuODksLTExNTAuODksMjgyMy4yNSwzOTIuOTc5LDQ4MS4xNDQpIj48c3RvcCBvZmZzZXQ9IjAiIHN0eWxlPSJzdG9wLWNvbG9yOiNiNzk3NGE7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjAuMTMiIHN0eWxlPSJzdG9wLWNvbG9yOiNiMTkxNDQ7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjAuNjQiIHN0eWxlPSJzdG9wLWNvbG9yOiNhMDdlMzI7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0eWxlPSJzdG9wLWNvbG9yOiM5YTc4MmM7c3RvcC1vcGFjaXR5OjEiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48L3N2Zz4=';
+}
+
+
+/**
+ * Whether to show the "Ask for review (On WordPress)" prompt.
+ * Shown only after 7 days since activation and if not dismissed.
+ */
+function intastellar_should_show_review_prompt()
+{
+    $activated_at = get_option('intastellar_plugin_activated_at');
+    if (! $activated_at) {
+        return false;
+    }
+    if (get_option('intastellar_review_prompt_dismissed')) {
+        return false;
+    }
+    $seven_days_ago = time() - (7 * DAY_IN_SECONDS);
+    return $activated_at <= $seven_days_ago;
+}
+
+/**
+ * WordPress.org review URL for this plugin.
+ */
+function intastellar_get_review_url()
+{
+    $slug = 'intastellar-gdpr-cookie-banner';
+    return 'https://wordpress.org/support/plugin/' . $slug . '/reviews/#new-post';
+}
+
+add_action('wp_ajax_intastellar_dismiss_review', function () {
+    if (! current_user_can('manage_options')) {
+        wp_send_json_error();
+    }
+    if (! isset($_REQUEST['nonce']) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['nonce'])), 'intastellar_dismiss_review')) {
+        wp_send_json_error();
+    }
+    update_option('intastellar_review_prompt_dismissed', true);
+    wp_send_json_success();
+});
+
+add_action('admin_init', 'intastellarSettingsRegistration', 1);
+add_action('admin_enqueue_scripts', 'initIntastellarAdminStyles', 1);
+
+function initIntastellarAdminStyles($hook)
+{
+    $is_plugin_page = (strpos($hook, 'intastellar-consents') !== false);
+    $is_dashboard  = ($hook === 'index.php');
+    if (! $is_plugin_page && ! $is_dashboard) {
+        return;
+    }
+
+    $plugin_version = get_plugin_data(__FILE__)['Version'];
+    wp_register_style('intastellarStyle', plugin_dir_url(__FILE__) . 'intastellarAdminStyle.css', false, $plugin_version, 'all');
+    wp_enqueue_style('intastellarStyle');
+
+    if ($is_plugin_page) {
+        wp_enqueue_script('intastellarScript', plugin_dir_url(__FILE__) . 'intastellarAdminScript.js', array('jquery'), $plugin_version, true);
+        wp_localize_script('intastellarScript', 'intastellarReview', array(
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'reviewUrl' => intastellar_get_review_url(),
+            'nonce' => wp_create_nonce('intastellar_dismiss_review'),
+        ));
+    }
+}
+
+function intastellar_enqueue_media_uploader($hook)
+{
+    // Only load on plugin pages to prevent conflicts with media library
+    if (strpos($hook, 'intastellar-consents') === false) {
+        error_log('intastellar_enqueue_media_uploader skipped for hook: ' . $hook);
+        return;
+    }
+
+    error_log('intastellar_enqueue_media_uploader executed for hook: ' . $hook);
+
+    $plugin_version = get_plugin_data(__FILE__)['Version'];
+    wp_enqueue_media();
+    wp_enqueue_script('intastellar-media-uploader', plugin_dir_url(__FILE__) . 'media-uploader.js', array('jquery'), $plugin_version, true);
+}
+
+add_action('admin_enqueue_scripts', 'intastellar_enqueue_media_uploader');
+
+function initIntastellarSettingsPage()
+{
+    add_menu_page('Intastellar CMP', 'Intastellar CMP', 'manage_options', 'intastellar-consents', 'intastellarGDPRSettingsForm', intastellar_get_menu_icon_url());
+    add_submenu_page("intastellar-consents", "Intro", "Intro", "manage_options", "intastellar-consents", "intastellarGDPRSettingsForm", null);
+    add_submenu_page("intastellar-consents", "Branding", "Branding", "manage_options", "intastellar-consents/branding", "intastellarCookieBranding", null);
+    add_submenu_page("intastellar-consents", "Settings", "Settings", "manage_options", "intastellar-consents/settings", "intastellarCookieSettings", null);
+    add_submenu_page("intastellar-consents", "Privacy", "Privacy", "manage_options", "intastellar-consents/privacy", "intastellarGDPRPrivacyPage", null);
+    add_submenu_page("intastellar-consents", "Help", "Help", "manage_options", "intastellar-consents/help", "intastellarCookieHelp", null);
+}
+add_action('admin_menu', 'initIntastellarSettingsPage');
+
+if (isset($_SERVER["REQUEST_URI"]) && strpos(sanitize_url(wp_unslash($_SERVER["REQUEST_URI"])), "wp-login.php") === false && !is_admin()) {
+    // Load the cookie banner
+    add_action('init', 'loadIntastellarCookieBanner');
+}
+
+function loadIntastellarCookieBanner()
+{
+    if (get_option('intastellarCustomIcon')) {
+        $logo = get_option('intastellarCustomIcon');
+    } else {
+        $logo = "";
+    }
+
+    if (get_option("intastellarDisplayCookieAdvenced")) {
+        $advanced = filter_var(get_option('intastellarDisplayCookieAdvenced'), FILTER_VALIDATE_BOOLEAN);
+    } else {
+        $advanced = false;
+    }
+
+    if (get_option("intastellarCookieBannerColor")) {
+        $color = get_option("intastellarCookieBannerColor");
+    } else {
+        $color = get_theme_mod('background_color');
+    }
+
+    if (get_option("intastellarCookieBanner-brandName")) {
+        $brandName = get_option("intastellarCookieBanner-brandName");
+    } else {
+        $brandName = get_bloginfo("name");
+    }
+
+    if (get_option('intastellarPrivacyLink-checkbox')) {
+        $link = array(
+            "url" => get_option('intastellarPrivacyLink'),
+            "target" => "_blank"
+        );
+    } else {
+        $link = get_option('intastellarPrivacyLink');
+    }
+    $collection = explode("\n", get_option('intastellarCCPAcollection'));
+    $collection = array_map('trim', $collection);
+
+    $rootDomain = get_option('intastellarSiteRoot');
+
+    $requiredCookies = (str_contains(get_option('intastellarCookieList'), "\n")) ? explode("\n", get_option('intastellarCookieList')) : explode(",", get_option('intastellarCookieList'));
+
+    wp_add_inline_script(
+        'intastellar-gdpr-settings',
+        'window.INTA = ' . wp_json_encode(array(
+            'policy_link' => $link,
+            'settings' => array(
+                'language' => get_option("intastellarSelectLanguage"),
+                'arrange' => get_option("intastellarSetCookiePosition"),
+                'logo' => $logo,
+                'color' => $color,
+                'company' => $brandName,
+                'design' => get_option('intastellarBannerStyle'),
+                'text' => filter_var(get_option('intastellarDisplayCookieNoticeText'), FILTER_VALIDATE_BOOLEAN),
+                'requiredCookies' => $requiredCookies,
+                'advanced' => $advanced,
+                'rootDomain' => $rootDomain
+            ),
+        )),
+        'before'
+    );
+}
+
+?>
+<?php
+function intastellarCookieSettings()
+{
+    $value = get_option('intastellarDisplayCookieNoticeText');
+    $value1 = get_option('intastellarSetCookiePosition');
+    $language = get_option('intastellarSelectLanguage');
+
+    $plugin_version = get_plugin_data(__FILE__)['Version'];
+?>
+    <section class="intastellarPluginContent">
+        <?php include("intastellarGDPRAdminPanelHeader.php"); ?>
+        <section class="intastellarPluginGrid">
+            <div class="intastellarPluginContent">
+                <header class="intastellarPluginPage-header">
+                    <h3 class="intastellarPluginHeader__headline"><?php esc_html_e('Settings', 'intastellar-consents'); ?></h3>
+                    <p><?php esc_html_e('Adjust your cookie banner settings here: placement, cookie notice text, fullscreen mode, and preferred language.', 'intastellar-consents'); ?></p>
+                </header>
+                <form method="post" action="options.php" enctype="multipart/form-data">
+                    <?php settings_fields('intastellar-consents_plugin_options-group'); ?>
+                    <section class="intastellarPluginContent">
+                        <h2><?php esc_html_e('Choose your banner style:', 'intastellar-consents'); ?></h2>
+                        <section class="grid">
+                            <label class="intastellarPlugin-style-seletor" for="overlay">
+                                <input type="radio" value="overlay" <?php if (get_option("intastellarBannerStyle") == "overlay") {
+                                                                        echo esc_html(sanitize_text_field("checked"));
+                                                                    } ?> name="intastellarBannerStyle" id="overlay">
+                                <img class="intastellar-banner-style-preview" src="<?php echo esc_url(plugin_dir_url(__FILE__) . "/assets/banner-design-2.png") ?>">
+                            </label>
+                            <label class="intastellarPlugin-style-seletor" for="banner">
+                                <input type="radio" value="banner" <?php if (get_option("intastellarBannerStyle") == "banner") {
+                                                                        echo esc_html(sanitize_text_field("checked"));
+                                                                    } ?> name="intastellarBannerStyle" id="banner">
+                                <img class="intastellar-banner-style-preview --banner" src="<?php echo esc_url(plugin_dir_url(__FILE__) . "/assets/banner-design-1.png") ?>">
+                            </label>
+                            <label class="intastellarPlugin-style-seletor" for="bannerV2">
+                                <input type="radio" value="bannerV2" <?php if (get_option("intastellarBannerStyle") == "bannerV2") {
+                                                                            echo esc_html(sanitize_text_field("checked"));
+                                                                        } ?> name="intastellarBannerStyle" id="bannerV2">
+                                <img class="intastellar-banner-style-preview --banner" src="<?php echo esc_url(plugin_dir_url(__FILE__) . "/assets/banner-design-2-v2.png") ?>">
+                            </label>
+                        </section>
+                    </section>
+                    <section id="placement" class="intastellarPluginContent__items">
+                        <label for="intastellarSetCookiePosition_id"><?php esc_html_e('Placement:', 'intastellar-consents'); ?></label>
+                        <select name="intastellarSetCookiePosition" class="regular-text" id="intastellarSetCookiePosition_id">
+                            <option value="ltr" <?php echo esc_html(($value1 == 'ltr' ? 'selected="selected"' : '')); ?>><?php esc_html_e('Left', 'intastellar-consents'); ?></option>
+                            <option value="rtl" <?php echo esc_html(($value1 == 'rtl' ? 'selected="selected"' : '')); ?>><?php esc_html_e('Right', 'intastellar-consents'); ?></option>
+                        </select>
+                    </section>
+                    <section class="intastellarPluginContent__items">
+                        <label for="rootDomain"><?php esc_html_e('Your Main Domain', 'intastellar-consents'); ?></label>
+                        <input type="text" name="intastellarSiteRoot" class="regular-text" id="rootDomain" value="<?php echo esc_attr(get_option("intastellarSiteRoot")); ?>">
+                    </section>
+                    <section id="language" class="intastellarPluginContent__items">
+                        <label for="intastellarSelectLanguage_id"><?php esc_html_e('Language:', 'intastellar-consents'); ?></label>
+                        <select id="intastellarSelectLanguage_id" class="regular-text" name="intastellarSelectLanguage">
+                            <option value="auto" <?php echo esc_attr(sanitize_text_field(($language == 'auto' ? 'selected="selected"' : ''))); ?> selected><?php esc_html_e('Auto detect', 'intastellar-consents'); ?></option>
+                            <option value="danish" <?php echo esc_attr(sanitize_text_field(($language == 'danish' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Danish', 'intastellar-consents'); ?></option>
+                            <option value="dutch" <?php echo esc_attr(sanitize_text_field(($language == 'dutch' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Dutch', 'intastellar-consents'); ?></option>
+                            <option value="english" <?php echo esc_attr(sanitize_text_field(($language == 'english' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('English', 'intastellar-consents'); ?></option>
+                            <option value="french" <?php echo esc_attr(sanitize_text_field(($language == 'french' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('French', 'intastellar-consents'); ?></option>
+                            <option value="finnish" <?php echo esc_attr(sanitize_text_field(($language == 'finnish' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Finnish', 'intastellar-consents'); ?></option>
+                            <option value="german" <?php echo esc_attr(sanitize_text_field(($language == 'german' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('German', 'intastellar-consents'); ?></option>
+                            <option value="italian" <?php echo esc_attr(sanitize_text_field(($language == 'italian' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Italian', 'intastellar-consents'); ?></option>
+                            <option value="norwegian" <?php echo esc_attr(sanitize_text_field(($language == 'norwegian' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Norwegian', 'intastellar-consents'); ?></option>
+                            <option value="russian" <?php echo esc_attr(sanitize_text_field(($language == 'russian' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Russian', 'intastellar-consents'); ?></option>
+                            <option value="spanish" <?php echo esc_attr(sanitize_text_field(($language == 'spanish' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Spanish', 'intastellar-consents'); ?></option>
+                            <option value="swedish" <?php echo esc_attr(sanitize_text_field(($language == 'swedish' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Swedish', 'intastellar-consents'); ?></option>
+                        </select>
+                    </section>
+                    <section>
+                        <label>
+                            <h3><?php esc_html_e('Required Cookies list:', 'intastellar-consents'); ?></h3>
+                            <p><?php esc_html_e('Enter a list of cookies that your website is required to use.', 'intastellar-consents'); ?></p>
+                            <p><?php esc_html_e('Example 1:', 'intastellar-consents'); ?> <code>cookie1, cookie2, cookie3</code></p>
+                            <p><?php esc_html_e('Example 2:', 'intastellar-consents'); ?> <code>
+                                    cookie1
+                                    cookie2
+                                    cookie3
+                                </code></p>
+                            <textarea name="" id="cookieList" cols="30" rows="10" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarCookieList'))); ?>"></textarea>
+                        </label>
+                    </section>
+                    <section id="text" class="intastellarPluginContent__items">
+                        <?php esc_html_e('Display Cookie Notice text:', 'intastellar-consents'); ?>
+                        <section>
+                            <input type="radio" class="regular-text --radio" name="intastellarDisplayCookieNoticeText" value="true" <?php echo esc_html(sanitize_text_field(($value == 'true' ? 'checked="checked"' : ''))); ?> /> <?php esc_html_e('Yes', 'intastellar-consents'); ?>
+                            <input type="radio" class="regular-text --radio" name="intastellarDisplayCookieNoticeText" value="false" <?php echo esc_html(sanitize_text_field(($value == 'false' || $value == '' ? 'checked="checked"' : ''))); ?> /> <?php esc_html_e('No', 'intastellar-consents'); ?>
+                        </section>
+                    </section>
+                    <input type='hidden' class="regular-text --fullWidth" id="intastellarCustomIcon_id" name="intastellarCustomIcon" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarCustomIcon'))); ?>">
+                    <input type='hidden' class="regular-text --color" id="intastellarCookieBannerColor_id" name="intastellarCookieBannerColor" value="<?php if (get_option('intastellarCookieBannerColor')) {
+                                                                                                                                                            echo esc_html(get_option('intastellarCookieBannerColor'));
+                                                                                                                                                        } else {
+                                                                                                                                                            echo esc_html(get_theme_mod('background_color'));
+                                                                                                                                                        } ?>">
+                    <input type='hidden' class="regular-text" id="intastellarPrivacyLink_id" name="intastellarPrivacyLink" required value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarPrivacyLink'))); ?>">
+                    <input type="hidden" id="intastellarPrivacyLink-checkbox" name="intastellarPrivacyLink-checkbox" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarPrivacyLink-checkbox'))); ?>">
+                    <input type="hidden" class="regular-text --color" id="intastellarCookieBanner-brandName" value="<?php if (get_option('intastellarCookieBanner-brandName')) {
+                                                                                                                        echo esc_html(sanitize_text_field(get_option('intastellarCookieBanner-brandName')));
+                                                                                                                    } else {
+                                                                                                                        echo esc_html(sanitize_text_field(get_bloginfo("name")));
+                                                                                                                    } ?>">
+                    <button type="submit" class="intastellarPluginSaveButton"><?php esc_html_e('Save changes', 'intastellar-consents'); ?></button>
+                </form>
+                <p><?php esc_html_e('You can also read the docs and download the newest version:', 'intastellar-consents'); ?> <a href="https://developers.intastellarsolutions.com/cookie-solutions/docs/wordpress-docs?utm_medium=wordpress_plugin&utm_source=<?php if (isset($_SERVER["HTTP_HOST"])) {
+                                                                                                                                                                                                                    echo esc_url(sanitize_url(wp_unslash($_SERVER["HTTP_HOST"])));
+                                                                                                                                                                                                                } ?>" target="_blank" rel="noopener"><?php esc_html_e('Intastellar GDPR cookie banner', 'intastellar-consents'); ?></a></p>
+                <?php include("intastellarGDPRAdminPanelFooter.php"); ?>
+            </div>
+        </section>
+    </section>
+<?php
+}
+?>
+<?php
+function intastellarGDPRSettingsForm()
+{
+    $checkbox = get_option('intastellarPrivacyLink-checkbox');
+    $language = get_option('intastellarSelectLanguage');
+    $plugin_version = get_plugin_data(__FILE__)['Version'];
+?>
+    <section class="intastellarPluginContent">
+        <?php include("intastellarGDPRAdminPanelHeader.php"); ?>
+        <?php
+        $plugin_version = get_plugin_data(__FILE__)['Version'];
+        if ($plugin_version != get_option('intastellarPluginVersion')) {
+            update_option('intastellarPluginVersion', $plugin_version);
+            esc_html('<div class="intastellarPluginContent__items --update">New Version: ' . $plugin_version . '</div>');
+        }
+        ?>
+        <section class="intastellarPluginGrid">
+
+            <div class="intastellarPluginContent">
+                <header class="intastellarPluginPage-header">
+                    <h3 class="intastellarPluginHeader__headline"><?php esc_html_e('Welcome to Intastellar Consents Solutions', 'intastellar-consents'); ?></h3>
+                    <p><?php esc_html_e('This cookie banner helps you and your website become GDPR compliant.', 'intastellar-consents'); ?></p>
+                </header>
+                <form method="post" action="options.php" enctype="multipart/form-data">
+                    <p><?php esc_html_e('To get started we need your Privacy Policy URL. After that you can edit the branding (brand color and logo) and in Settings configure placement, cookie notice text, and language.', 'intastellar-consents'); ?></p>
+                    <p><?php esc_html_e('Want to learn more? Read more at:', 'intastellar-consents'); ?> <a target="_blank" href="https://www.intastellarsolutions.com/solutions/cookie-consents">www.intastellarsolutions.com/solutions/cookie-consents</a></p>
+                    <p><?php esc_html_e('Let\'s get started with your privacy policy and preferred language.', 'intastellar-consents'); ?></p>
+                    <?php settings_fields('intastellar-consents_plugin_options-group'); ?>
+                    <section id="privacy" class="intastellarPluginContent__items">
+                        <label for="intastellarPrivacyLink_id"><?php echo esc_html(__('URL to your Privacy Policy page*:', 'intastellar-consents')); ?></label>
+                        <section>
+                            <input type='text' class="regular-text" id="intastellarPrivacyLink_id" name="intastellarPrivacyLink" required value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarPrivacyLink'))); ?>">
+                            <input type="checkbox" class="intastellarPluginContent__items-checkbox" id="intastellarPrivacyLink-checkbox" name="intastellarPrivacyLink-checkbox" value="true" <?php echo esc_html(sanitize_text_field(($checkbox == 'true' ? 'checked="checked"' : ''))); ?>> <label for="intastellarPrivacyLink-checkbox"><?php esc_html_e('Open in new window', 'intastellar-consents'); ?></label>
+                        </section>
+                    </section>
+                    <section class="intastellarPluginContent__items">
+                        <label for="rootDomain"><?php esc_html_e('Your Main Domain', 'intastellar-consents'); ?></label>
+                        <input type="text" name="intastellarSiteRoot" class="regular-text" id="rootDomain" value="<?php echo esc_attr(sanitize_text_field(get_option("intastellarSiteRoot"))); ?>">
+                    </section>
+                    <section id="language" class="intastellarPluginContent__items">
+                        <label for="intastellarSelectLanguage_id"><?php esc_html_e('Language:', 'intastellar-consents'); ?></label>
+                        <select id="intastellarSelectLanguage_id" class="regular-text" name="intastellarSelectLanguage">
+                            <option value="auto" <?php echo esc_attr(sanitize_text_field(($language == 'auto' ? 'selected="selected"' : ''))); ?> selected><?php esc_html_e('Auto detect', 'intastellar-consents'); ?></option>
+                            <option value="danish" <?php echo esc_attr(sanitize_text_field(($language == 'danish' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Danish', 'intastellar-consents'); ?></option>
+                            <option value="dutch" <?php echo esc_attr(sanitize_text_field(($language == 'dutch' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Dutch', 'intastellar-consents'); ?></option>
+                            <option value="english" <?php echo esc_attr(sanitize_text_field(($language == 'english' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('English', 'intastellar-consents'); ?></option>
+                            <option value="french" <?php echo esc_attr(sanitize_text_field(($language == 'french' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('French', 'intastellar-consents'); ?></option>
+                            <option value="finnish" <?php echo esc_attr(sanitize_text_field(($language == 'finnish' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Finnish', 'intastellar-consents'); ?></option>
+                            <option value="german" <?php echo esc_attr(sanitize_text_field(($language == 'german' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('German', 'intastellar-consents'); ?></option>
+                            <option value="italian" <?php echo esc_attr(sanitize_text_field(($language == 'italian' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Italian', 'intastellar-consents'); ?></option>
+                            <option value="norwegian" <?php echo esc_attr(sanitize_text_field(($language == 'norwegian' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Norwegian', 'intastellar-consents'); ?></option>
+                            <option value="russian" <?php echo esc_attr(sanitize_text_field(($language == 'russian' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Russian', 'intastellar-consents'); ?></option>
+                            <option value="spanish" <?php echo esc_attr(sanitize_text_field(($language == 'spanish' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Spanish', 'intastellar-consents'); ?></option>
+                            <option value="swedish" <?php echo esc_attr(sanitize_text_field(($language == 'swedish' ? 'selected="selected"' : ''))); ?>><?php esc_html_e('Swedish', 'intastellar-consents'); ?></option>
+                        </select>
+                    </section>
+                    <input type='hidden' class="regular-text --fullWidth" id="intastellarCustomIcon_id" name="intastellarCustomIcon" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarCustomIcon'))); ?>">
+                    <input type="hidden" name="intastellarSetCookiePosition" id="intastellarSetCookiePosition_id" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarSetCookiePosition'))); ?>">
+                    <input type='hidden' class="regular-text --color" id="intastellarCookieBannerColor_id" name="intastellarCookieBannerColor" value="<?php if (get_option('intastellarCookieBannerColor')) {
+                                                                                                                                                            echo esc_html(sanitize_text_field(get_option('intastellarCookieBannerColor')));
+                                                                                                                                                        } else {
+                                                                                                                                                            echo esc_html(sanitize_text_field(get_theme_mod('background_color')));
+                                                                                                                                                        } ?>">
+                    <input type="hidden" name="intastellarDisplayCookieAdvenced" id="intastellarDisplayCookieAdvenced" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarDisplayCookieAdvenced'))); ?>">
+                    <input type="hidden" name="intastellarDisplayCookieNoticeText" id="intastellarDisplayCookieNoticeText" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarDisplayCookieNoticeText'))); ?>">
+                    <input type="hidden" class="regular-text --color" id="intastellarCookieBanner-brandName" value="<?php if (get_option('intastellarCookieBanner-brandName')) {
+                                                                                                                        echo esc_html(sanitize_text_field(get_option('intastellarCookieBanner-brandName')));
+                                                                                                                    } else {
+                                                                                                                        echo esc_html(sanitize_text_field(get_bloginfo("name")));
+                                                                                                                    } ?>">
+                    <input type="hidden" name="intastellarBannerStyle" value="<?php if (get_option('intastellarBannerStyle')) {
+                                                                                    echo esc_html(sanitize_text_field(get_option('intastellarBannerStyle')));
+                                                                                } else {
+                                                                                    echo esc_html(sanitize_text_field("overlay"));
+                                                                                } ?>">
+                    <button type="submit" class="intastellarPluginSaveButton"><?php esc_html_e('Save changes', 'intastellar-consents'); ?></button>
+                </form>
+                <p><?php esc_html_e('You can also read the docs or download the newest version:', 'intastellar-consents'); ?> <a href="https://developers.intastellarsolutions.com/cookie-solutions/docs/wordpress-docs?utm_medium=wordpress_plugin&utm_source=<?php if (isset($_SERVER["HTTP_HOST"])) {
+                                                                                                                                                                                                                    echo esc_url(sanitize_url(wp_unslash($_SERVER["HTTP_HOST"])));
+                                                                                                                                                                                                                } ?>" target="_blank" rel="noopener"><?php esc_html_e('Intastellar Consents Solutions', 'intastellar-consents'); ?></a></p>
+                <?php include("intastellarGDPRAdminPanelFooter.php"); ?>
+            </div>
+        </section>
+    </section>
+<?php } ?>
+<?php
+function intastellarGDPRPrivacyPage()
+{
+    $checkbox = get_option('intastellarPrivacyLink-checkbox');
+    $plugin_version = get_plugin_data(__FILE__)['Version'];
+?>
+    <section class="intastellarPluginContent">
+        <?php include("intastellarGDPRAdminPanelHeader.php"); ?>
+        <section class="intastellarPluginGrid">
+
+            <div class="intastellarPluginContent">
+                <header class="intastellarPluginPage-header">
+                    <h3 class="intastellarPluginHeader__headline"><?php esc_html_e('Privacy Policy', 'intastellar-consents'); ?></h3>
+                    <p><?php esc_html_e('Change your privacy link and choose whether to open it in a new window.', 'intastellar-consents'); ?></p>
+                </header>
+                <form method="post" action="options.php" enctype="multipart/form-data">
+                    <?php settings_fields('intastellar-consents_plugin_options-group'); ?>
+                    <section id="privacy" class="intastellarPluginContent__items">
+                        <label for="intastellarPrivacyLink_id"><?php echo esc_html(__('URL to your Privacy Policy page*:', 'intastellar-consents')); ?></label>
+                        <section>
+                            <input type='text' class="regular-text" id="intastellarPrivacyLink_id" name="intastellarPrivacyLink" required value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarPrivacyLink'))); ?>">
+                            <input type="checkbox" class="intastellarPluginContent__items-checkbox" id="intastellarPrivacyLink-checkbox" name="intastellarPrivacyLink-checkbox" value="true" <?php echo esc_html(sanitize_text_field(sanitize_text_field(($checkbox == 'true' ? 'checked="checked"' : '')))); ?>> <label for="intastellarPrivacyLink-checkbox"><?php esc_html_e('Open in new window', 'intastellar-consents'); ?></label>
+                        </section>
+                    </section>
+                    <input type="hidden" id="intastellarSelectLanguage_id" name="intastellarSelectLanguage" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarSelectLanguage'))); ?>">
+                    <input type="hidden" id="intastellarSelectLanguage_id" name="intastellarSiteRoot" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarSiteRoot'))); ?>">
+                    <input type='hidden' class="regular-text --fullWidth" id="intastellarCustomIcon_id" name="intastellarCustomIcon" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarCustomIcon'))); ?>">
+                    <input type='hidden' class="regular-text --color" id="intastellarCookieBannerColor_id" name="intastellarCookieBannerColor" value="<?php if (get_option('intastellarCookieBannerColor')) {
+                                                                                                                                                            echo esc_html(sanitize_text_field(get_option('intastellarCookieBannerColor')));
+                                                                                                                                                        } else {
+                                                                                                                                                            echo esc_html(sanitize_text_field(get_theme_mod('background_color')));
+                                                                                                                                                        } ?>">
+                    <input type="hidden" name="intastellarSetCookiePosition" id="intastellarSetCookiePosition_id" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarSetCookiePosition'))); ?>">
+                    <input type="hidden" name="intastellarSiteRoot" id="intastellarSetCookiePosition_id" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarSiteRoot'))); ?>">
+                    <input type="hidden" class="regular-text --color" id="intastellarCookieBanner-brandName" value="<?php if (get_option('intastellarCookieBanner-brandName')) {
+                                                                                                                        echo esc_html(sanitize_text_field(get_option('intastellarCookieBanner-brandName')));
+                                                                                                                    } else {
+                                                                                                                        echo esc_html(sanitize_text_field(get_bloginfo("name")));
+                                                                                                                    } ?>">
+                    <input type="hidden" name="intastellarBannerStyle" value="<?php if (get_option('intastellarBannerStyle')) {
+                                                                                    echo esc_html(sanitize_text_field(get_option('intastellarBannerStyle')));
+                                                                                } else {
+                                                                                    echo esc_html(sanitize_text_field("overlay"));
+                                                                                } ?>">
+                    <input type="hidden" name="intastellarDisplayCookieAdvenced" id="intastellarDisplayCookieAdvenced" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarDisplayCookieAdvenced'))); ?>">
+                    <input type="hidden" name="intastellarDisplayCookieNoticeText" id="intastellarDisplayCookieNoticeText" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarDisplayCookieNoticeText'))); ?>">
+                    <button type="submit" class="intastellarPluginSaveButton"><?php esc_html_e('Save changes', 'intastellar-consents'); ?></button>
+                </form>
+                <p><?php esc_html_e('You can also read the docs or download the newest version:', 'intastellar-consents'); ?> <a href="https://developers.intastellarsolutions.com/cookie-solutions/docs/wordpress-docs?utm_medium=wordpress_plugin&utm_source=<?php if (isset($_SERVER["HTTP_HOST"])) {
+                                                                                                                                                                                                                    echo esc_url(sanitize_url(wp_unslash($_SERVER["HTTP_HOST"])));
+                                                                                                                                                                                                                } ?>" target="_blank" rel="noopener"><?php esc_html_e('Intastellar Consents Solutions', 'intastellar-consents'); ?></a></p>
+                <?php include("intastellarGDPRAdminPanelFooter.php"); ?>
+            </div>
+        </section>
+    </section>
+<?php } ?>
+<?php
+function intastellarCookieBranding()
+{
+    $plugin_version = get_plugin_data(__FILE__)['Version'];
+?>
+    <section class="intastellarPluginContent">
+        <?php include("intastellarGDPRAdminPanelHeader.php"); ?>
+        <section class="intastellarPluginGrid">
+
+            <div class="intastellarPluginContent">
+                <header class="intastellarPluginPage-header">
+                    <h3 class="intastellarPluginHeader__headline"><?php esc_html_e('Branding', 'intastellar-consents'); ?></h3>
+                    <p><?php esc_html_e('Customize the banner to reflect your brand identity. Change the appearance of the cookie banner using your brand color and logo.', 'intastellar-consents'); ?></p>
+                </header>
+                <form method="post" action="options.php" enctype="multipart/form-data">
+                    <?php settings_fields('intastellar-consents_plugin_options-group'); ?>
+                    <section id="brandname" class="intastellarPluginContent__items">
+                        <label for="intastellarCustomIcon_id"><?php esc_html_e('Company name:', 'intastellar-consents'); ?></label>
+                        <section>
+                            <input type="text" class="regular-text" id="intastellarCookieBanner-brandName" name="intastellarCookieBanner-brandName" value="<?php if (get_option('intastellarCookieBanner-brandName')) {
+                                                                                                                                                                echo esc_html(sanitize_text_field(get_option('intastellarCookieBanner-brandName')));
+                                                                                                                                                            } else {
+                                                                                                                                                                echo esc_html(sanitize_text_field(get_bloginfo("name")));
+                                                                                                                                                            } ?>">
+                        </section>
+                    </section>
+                    <section id="color" class="intastellarPluginContent__items">
+                        <label for="intastellarCookieBannerColor_id"><?php esc_html_e('Brand Color:', 'intastellar-consents'); ?></label>
+                        <div class="colorPallet">
+                            <input type='color' class="regular-text --color" id="intastellarCookieBannerColor_id" name="intastellarCookieBannerColor" value="<?php if (get_option('intastellarCookieBannerColor')) {
+                                                                                                                                                                    echo esc_html(sanitize_text_field(get_option('intastellarCookieBannerColor')));
+                                                                                                                                                                } else {
+                                                                                                                                                                    echo esc_html(sanitize_text_field(get_theme_mod('background_color')));
+                                                                                                                                                                } ?>">
+                            <span class="colorValue" id="intastellarCookieBannerColorValue" contenteditable><?php if (get_option('intastellarCookieBannerColor')) {
+                                                                                                                echo esc_html(sanitize_text_field(get_option('intastellarCookieBannerColor')));
+                                                                                                            } else {
+                                                                                                                echo esc_html(sanitize_text_field(get_theme_mod('background_color')));
+                                                                                                            } ?></span>
+                        </div>
+                    </section>
+                    <section id="logo" class="intastellarPluginContent__items">
+                        <label for="intastellarCustomIcon_id"><?php esc_html_e('Company Logo:', 'intastellar-consents'); ?>
+                            <br>
+                            <small><?php esc_html_e('Recommended: max-width 200px, min-width 100px for near-square logos.', 'intastellar-consents'); ?></small>
+                            <input type='hidden' class="regular-text --fullWidth" id="intastellarCustomIcon_id" name="intastellarCustomIcon" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarCustomIcon'))); ?>">
+                            <button type="button" class="button" id="intastellarCustomIconButton"><?php esc_html_e('Select or Upload Logo', 'intastellar-consents'); ?></button>
+                        </label>
+                        <section>
+                            <img src="<?php echo esc_html(sanitize_text_field(get_option('intastellarCustomIcon'))); ?>" class="intastellarCookieSettingsLogo" id="intastellarCustomIconPreview">
+                        </section>
+                    </section>
+                    <input type='hidden' class="regular-text" id="intastellarPrivacyLink_id" name="intastellarPrivacyLink" required value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarPrivacyLink'))); ?>">
+                    <input type="hidden" id="intastellarSelectLanguage_id" name="intastellarSelectLanguage" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarSelectLanguage'))); ?>">
+                    <input type="hidden" name="intastellarSetCookiePosition" id="intastellarSetCookiePosition_id" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarSetCookiePosition'))); ?>">
+                    <input type="hidden" id="intastellarPrivacyLink-checkbox" name="intastellarPrivacyLink-checkbox" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarPrivacyLink-checkbox'))); ?>">
+                    <input type="hidden" name="intastellarDisplayCookieAdvenced" id="intastellarDisplayCookieAdvenced" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarDisplayCookieAdvenced'))); ?>">
+                    <input type="hidden" name="intastellarDisplayCookieNoticeText" id="intastellarDisplayCookieNoticeText" value="<?php echo esc_attr(sanitize_text_field(get_option('intastellarDisplayCookieNoticeText'))); ?>">
+                    <input type="hidden" name="intastellarSiteRoot" class="regular-text" id="rootDomain" value="<?php echo esc_attr(sanitize_text_field(get_option("intastellarSiteRoot"))); ?>">
+                    <input type="hidden" name="intastellarBannerStyle" value="<?php if (get_option('intastellarBannerStyle')) {
+                                                                                    echo esc_html(sanitize_text_field(get_option('intastellarBannerStyle')));
+                                                                                } else {
+                                                                                    echo esc_html(sanitize_text_field("overlay"));
+                                                                                } ?>">
+                    <button type="submit" class="intastellarPluginSaveButton"><?php esc_html_e('Save changes', 'intastellar-consents'); ?></button>
+                </form>
+                <p><?php esc_html_e('You can also read the docs or download the newest version:', 'intastellar-consents'); ?> <a href="https://developers.intastellarsolutions.com/cookie-solutions/docs/wordpress-docs?utm_medium=wordpress_plugin&utm_source=<?php if (isset($_SERVER["HTTP_HOST"])) {
+                                                                                                                                                                                                                    echo esc_url(sanitize_url(wp_unslash($_SERVER["HTTP_HOST"])));
+                                                                                                                                                                                                                } ?>" target="_blank" rel="noopener"><?php esc_html_e('Intastellar Consents Solutions', 'intastellar-consents'); ?></a></p>
+                <?php include("intastellarGDPRAdminPanelFooter.php"); ?>
+            </div>
+        </section>
+    </section>
+<?php } ?>
+<?php
+function intastellarCookieHelp()
+{
+    $plugin_version = get_plugin_data(__FILE__)['Version'];
+?>
+    <section class="intastellarPluginContent">
+        <?php include("intastellarGDPRAdminPanelHeader.php"); ?>
+        <section class="intastellarPluginGrid">
+
+            <div class="intastellarPluginContent">
+                <h1><?php esc_html_e('Help', 'intastellar-consents'); ?></h1>
+                <p><?php esc_html_e('Documentation and FAQs to help you get started:', 'intastellar-consents'); ?></p>
+                <ul>
+                    <li><a href="https://developers.intastellarsolutions.com/cookie-solutions/docs/wordpress-docs" target="_blank" rel="noopener"><?php esc_html_e('Official Documentation', 'intastellar-consents'); ?></a></li>
+                    <li><a href="https://support.intastellarsolutions.com/cookie-solutions/faq" target="_blank" rel="noopener"><?php esc_html_e('Official FAQs', 'intastellar-consents'); ?></a></li>
+                </ul>
+                <?php include("intastellarGDPRAdminPanelFooter.php"); ?>
+            </div>
+        </section>
+    </section>
+<?php } ?>
