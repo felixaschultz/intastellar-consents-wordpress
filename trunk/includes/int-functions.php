@@ -144,6 +144,7 @@ add_action('admin_notices', 'intastellar_activation_success_notice');
 
 /**
  * Whether a valid privacy policy URL is configured.
+ * The banner is only shown on the front-end when this returns true.
  */
 function intastellar_has_valid_privacy_policy()
 {
@@ -151,7 +152,11 @@ function intastellar_has_valid_privacy_policy()
     if (! is_string($url) || trim($url) === '') {
         return false;
     }
-    return esc_url_raw(trim($url)) !== '';
+    $url = trim($url);
+    if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+        return false;
+    }
+    return esc_url_raw($url) !== '';
 }
 
 /**
@@ -219,8 +224,8 @@ function intastellar_dashboard_widget_render()
         include_once ABSPATH . 'wp-admin/includes/plugin.php';
     }
     $main_file    = dirname(dirname(__FILE__)) . '/intastellar-consents.php';
-    $plugin_active = file_exists($main_file) && is_plugin_active(plugin_basename($main_file));
     $privacy_set   = intastellar_has_valid_privacy_policy();
+    $plugin_active = file_exists($main_file) && is_plugin_active(plugin_basename($main_file)) && $privacy_set;
     $allowed_a    = array('a' => array('href' => array(), 'target' => array(), 'rel' => array()));
 
     // Domain (compute early for grid)
@@ -370,8 +375,8 @@ function intastellar_dashboard_render()
         include_once ABSPATH . 'wp-admin/includes/plugin.php';
     }
     $main_file    = dirname(dirname(__FILE__)) . '/intastellar-consents.php';
-    $plugin_active = file_exists($main_file) && is_plugin_active(plugin_basename($main_file));
     $privacy_set   = intastellar_has_valid_privacy_policy();
+    $plugin_active = file_exists($main_file) && is_plugin_active(plugin_basename($main_file)) && $privacy_set;
 
     // Branding data
     $brand_color = get_option('intastellarCookieBannerColor');
@@ -789,7 +794,7 @@ function intastellarCookieSettings()
 
                             <div class="intastellar-settings-page__card">
                                 <label for="rootDomain" class="intastellar-settings-dashboard__card-label"><?php esc_html_e('Main domain', 'intastellar-consents'); ?></label>
-                                <input type="text" name="intastellarSiteRoot" class="intastellar-settings-page__input" id="rootDomain" value="<?php echo esc_attr(get_option('intastellarSiteRoot')); ?>" placeholder="example.com">
+                                <input type="text" name="intastellarSiteRoot" class="intastellar-settings-page__input" id="rootDomain" value="<?php echo esc_attr(get_option('intastellarSiteRoot') ?: get_bloginfo('url')); ?>" placeholder="example.com">
                             </div>
 
                             <div class="intastellar-settings-page__card">

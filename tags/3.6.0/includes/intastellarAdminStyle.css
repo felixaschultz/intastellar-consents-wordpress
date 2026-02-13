@@ -999,7 +999,17 @@
     }
 
     .intastellarPluginHeader__logo {
-        width: 17%;
+        width: 60%;
+    }
+
+    .intastellarPlugin-sideNavigation {
+        display: none;
+    }
+
+    .intastellarPluginHeader-navigation {
+        max-width: 100%;
+        margin: 0;
+        overflow: scroll;
     }
 
     .intastellarPlugin-sideNavigation {

@@ -219,8 +219,8 @@ function intastellar_dashboard_widget_render()
         include_once ABSPATH . 'wp-admin/includes/plugin.php';
     }
     $main_file    = dirname(dirname(__FILE__)) . '/intastellar-consents.php';
+    $plugin_active = file_exists($main_file) && is_plugin_active(plugin_basename($main_file)) && intastellar_has_valid_privacy_policy();
     $privacy_set   = intastellar_has_valid_privacy_policy();
-    $plugin_active = file_exists($main_file) && is_plugin_active(plugin_basename($main_file)) && $privacy_set;
     $allowed_a    = array('a' => array('href' => array(), 'target' => array(), 'rel' => array()));
 
     // Domain (compute early for grid)
@@ -370,8 +370,8 @@ function intastellar_dashboard_render()
         include_once ABSPATH . 'wp-admin/includes/plugin.php';
     }
     $main_file    = dirname(dirname(__FILE__)) . '/intastellar-consents.php';
+    $plugin_active = file_exists($main_file) && is_plugin_active(plugin_basename($main_file)) && intastellar_has_valid_privacy_policy();
     $privacy_set   = intastellar_has_valid_privacy_policy();
-    $plugin_active = file_exists($main_file) && is_plugin_active(plugin_basename($main_file)) && $privacy_set;
 
     // Branding data
     $brand_color = get_option('intastellarCookieBannerColor');
@@ -789,7 +789,7 @@ function intastellarCookieSettings()
 
                             <div class="intastellar-settings-page__card">
                                 <label for="rootDomain" class="intastellar-settings-dashboard__card-label"><?php esc_html_e('Main domain', 'intastellar-consents'); ?></label>
-                                <input type="text" name="intastellarSiteRoot" class="intastellar-settings-page__input" id="rootDomain" value="<?php echo esc_attr(get_option('intastellarSiteRoot') ?: get_bloginfo('url')); ?>" placeholder="example.com">
+                                <input type="text" name="intastellarSiteRoot" class="intastellar-settings-page__input" id="rootDomain" value="<?php echo esc_attr(get_option('intastellarSiteRoot')); ?>" placeholder="example.com">
                             </div>
 
                             <div class="intastellar-settings-page__card">

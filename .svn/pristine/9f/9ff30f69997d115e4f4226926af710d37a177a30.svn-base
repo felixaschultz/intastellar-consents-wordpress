@@ -1,0 +1,41 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "landingPage": "/",
+  "preferredVersions": {
+    "php": "8.2",
+    "wp": "6.4"
+  },
+  "phpExtensionBundles": [
+    "kitchen-sink"
+  ],
+  "steps": [
+    {
+      "step": "login",
+      "username": "admin",
+      "password": "password"
+    },
+    {
+        "step": "installPlugin",
+        "pluginZipFile": {
+            "resource": "wordpress.org\/plugins",
+            "slug": "intastellar-gdpr-cookie-banner"
+        },
+        "options": {
+            "activate": true
+        }
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php require_once 'wordpress/wp-load.php'; $post_id = wp_insert_post(array('post_title' => 'Privacy Policy', 'post_content' => 'This is our privacy policy. For demonstration purposes.', 'post_status' => 'publish', 'post_type' => 'page')); if ($post_id && !is_wp_error($post_id)) { update_option('intastellarPrivacyLink', get_permalink($post_id)); } ?>"
+    },
+    {
+      "step": "configurePlugin",
+      "options": {
+        "privacyPolicy": "This is our privacy policy. For demonstration purposes.",
+        "privacyPolicyUrl": "https://www.intastellarsolutions.com/about/legal/privacy",
+        "language": "en_US",
+        "displayCookieNoticeText": false
+      }
+    }
+  ]
+}

@@ -789,7 +789,7 @@ function intastellarCookieSettings()
 
                             <div class="intastellar-settings-page__card">
                                 <label for="rootDomain" class="intastellar-settings-dashboard__card-label"><?php esc_html_e('Main domain', 'intastellar-consents'); ?></label>
-                                <input type="text" name="intastellarSiteRoot" class="intastellar-settings-page__input" id="rootDomain" value="<?php echo esc_attr(get_option('intastellarSiteRoot') ?: get_bloginfo('url')); ?>" placeholder="example.com">
+                                <input type="text" name="intastellarSiteRoot" class="intastellar-settings-page__input" id="rootDomain" value="<?php echo esc_attr(get_option('intastellarSiteRoot')); ?>" placeholder="example.com">
                             </div>
 
                             <div class="intastellar-settings-page__card">
