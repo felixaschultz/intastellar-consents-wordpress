@@ -2,7 +2,7 @@
 
 License:            GPL v2 or later
 License URI:        https://www.gnu.org/licenses/gpl-2.0.html
-Stable tag:         3.6.0
+Stable tag:         3.7.0
 Tested up to:       6.9
 Contributors:       intastellar
 Requires at least:  5.8
@@ -10,17 +10,17 @@ Requires PHP:       7.4
 Tags: gdpr, wordpress cookie consent, cookie banner, google consent mode, consent mode v2
 
 = Short Description =
-Free GDPR cookie banner for WordPress. Automatically block tracking scripts and support Google Consent Mode.
+Free GDPR, CCPA, LGPD, POPIA cookie banner for WordPress. Automatically block tracking scripts and support Google Consent Mode.
 
 == Description ==
 [Intastellar Consents](https://www.intastellarsolutions.com/solutions/cookie-consents) allows you to display a compliant cookie consent banner on your WordPress website and block non-essential scripts until consent is given.
 
-Unlike heavy consent management platforms, Intastellar Consents focuses on:
-
-- Fast implementation
-- Clear consent choices
-- Minimal performance impact
-- No tracking of users by default
+Intastellar Consents supports out of the box the following compliance laws:
+- GDPR
+- ePrivacy Directive
+- CCPA / CPRA
+- LGPD in Brazil
+- POPIA in South Africa
 
 The plugin integrates seamlessly by loading the Intastellar Consents script and handling consent logic centrally, ensuring consistent behavior across pages.
 
@@ -41,6 +41,7 @@ Consent signals are updated dynamically when users change their preferences.
 - Easy plugin install or single-script integration
 - Hosted securely in the EU
 - Compatible with Google Analytics, Meta Pixel, Microsoft UET/Clarity, HubSpot, and others
+- Support for LGPD in Brazil and POPIA in South Africa
 
 == Supported WordPress Languages ==
 The full plugin admin (Settings, Branding, Intro, Privacy, Help, and the “Ask for review” prompt) is translated into the following languages. Set your site or admin language in **Settings → General** (or your user profile language for the admin) to use them.
@@ -54,6 +55,7 @@ The full plugin admin (Settings, Branding, Intro, Privacy, Help, and the “Ask 
 - Dutch (Nederlands)
 - Polish (Polski)
 - Portuguese – Portugal (Português)
+- Japanese (日本語)
 
 == Translations ==
 * **Plugin admin:** The list above is built into the plugin; no extra setup is needed. Just set your WordPress or user language and the admin will appear in that language.
@@ -149,6 +151,8 @@ You can change the placement of the banner by going to the settings page and cho
 4. The settings page: placement, cookie notice text, fullscreen mode, and language.
 
 == Changelog ==
+= 3.7.0 =
+Implemented A/B testing feature. Support for LGPD and POPIA.
 = 3.6.0 =
 Refactored the admin panel & added a dashboard widget. Refactored all the layout of the plugin.
 = 3.5.4 =
