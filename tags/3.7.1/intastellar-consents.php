@@ -1,0 +1,113 @@
+<?php
+
+/**
+ * Plugin Name: Intastellar Consents Solutions
+ * Plugin URI: https://www.intastellarsolutions.com/solutions/cookie-consents
+ * Description: Automatically add a GDPR compliant cookie consent banner and block scripts until consent is given.
+ * Version: 3.7.1
+ * Author: Intastellar Solutions, International
+ * Author URI: https://www.intastellarsolutions.com
+ * License: GPL2
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: intastellar-consents
+ * Domain Path: /languages
+ * Requires at least: 5.8
+ * Requires PHP: 7.4
+ */
+if (! defined('ABSPATH')) exit;
+
+if (!function_exists('add_action')) {
+    echo 'Hi there!  I\'m just a plugin, not much I can do when called directly.';
+    exit;
+}
+
+
+/**
+ * Store activation timestamp for "Ask for review" prompt (shown after 7 days).
+ */
+register_activation_hook(__FILE__, function () {
+    if (! get_option('intastellar_plugin_activated_at')) {
+        update_option('intastellar_plugin_activated_at', time());
+    }
+    set_transient('intastellar_activation_redirect', true, 30);
+});
+
+add_action('plugins_loaded', function () {
+    $plugin_data = get_plugin_data(__FILE__);
+    $plugin_version = $plugin_data['Version'];
+    if (isset($_SERVER["REQUEST_URI"]) && !str_contains(sanitize_url(wp_unslash($_SERVER["REQUEST_URI"])), 'wp-admin')) {
+        wp_enqueue_script("intastellar-gdpr-settings", "https://consents.cdn.intastellarsolutions.com/uc.js?utm_source=Intastellar+GDPR+Wordpress+Plugin", false, $plugin_version, false);
+    }
+    include_once plugin_dir_path(__FILE__) . 'includes/int-functions.php';
+}, 1);
+
+add_action('init', function () {
+    intastellar_load_textdomain();
+}, 0);
+
+add_action('plugins_loaded', function () {
+    intastellar_load_textdomain();
+}, 5);
+
+/**
+ * Load plugin translations from the plugin's languages folder (absolute path).
+ * Tries site locale and (in admin) user locale so Danish works when WordPress is set to Danish.
+ */
+function intastellar_load_textdomain() {
+    $plugin_dir = plugin_dir_path(__FILE__);
+    $lang_dir   = $plugin_dir . 'languages/';
+    $domain     = 'intastellar-consents';
+
+    $locales = array(get_locale());
+    if (is_admin() && function_exists('get_user_locale')) {
+        $locales[] = get_user_locale();
+    }
+    foreach (array_unique($locales) as $locale) {
+        $mofile = $lang_dir . $domain . '-' . $locale . '.mo';
+        if (file_exists($mofile)) {
+            load_textdomain($domain, $mofile);
+            return;
+        }
+        $parts = explode('_', $locale);
+        if (count($parts) >= 2) {
+            $base = $parts[0] . '_' . $parts[1];
+            if ($base !== $locale) {
+                $mofile = $lang_dir . $domain . '-' . $base . '.mo';
+                if (file_exists($mofile)) {
+                    load_textdomain($domain, $mofile);
+                    return;
+                }
+            }
+        }
+    }
+    load_plugin_textdomain($domain, false, dirname(plugin_basename(__FILE__)) . '/languages');
+}
+
+add_filter('load_textdomain_mofile', function ($mofile, $domain) {
+    if ($domain !== 'intastellar-consents') {
+        return $mofile;
+    }
+    $lang_dir = plugin_dir_path(__FILE__) . 'languages/';
+    $locales  = array(get_locale());
+    if (is_admin() && function_exists('get_user_locale')) {
+        $locales[] = get_user_locale();
+    }
+    foreach (array_unique($locales) as $locale) {
+        $plugin_mo = $lang_dir . 'intastellar-consents-' . $locale . '.mo';
+        if (file_exists($plugin_mo)) {
+            return $plugin_mo;
+        }
+        // Fallback: e.g. de_DE_formal -> de_DE (use base locale if formal/variant file missing)
+        $parts = explode('_', $locale);
+        if (count($parts) >= 2) {
+            $base = $parts[0] . '_' . $parts[1];
+            if ($base !== $locale) {
+                $plugin_mo = $lang_dir . 'intastellar-consents-' . $base . '.mo';
+                if (file_exists($plugin_mo)) {
+                    return $plugin_mo;
+                }
+            }
+        }
+    }
+    return $mofile;
+}, 10, 2);
