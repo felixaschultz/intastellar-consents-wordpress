@@ -1,5 +1,22 @@
 <?php
 if (! defined('ABSPATH')) exit;
+
+/** Main plugin bootstrap path (WordPress identifies the plugin by this file). */
+if (! defined('INTASTELLAR_CONSENTS_PLUGIN_FILE')) {
+    define('INTASTELLAR_CONSENTS_PLUGIN_FILE', dirname(__DIR__) . '/intastellar-consents.php');
+}
+
+/**
+ * WP Consent API: mark this plugin as a consent management implementation.
+ * Filter key must use basename of the main plugin file (not this include).
+ *
+ * @see https://wordpress.org/plugins/wp-consent-api/
+ */
+add_filter(
+    'wp_consent_api_registered_' . plugin_basename(INTASTELLAR_CONSENTS_PLUGIN_FILE),
+    '__return_true'
+);
+
 require_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
 // get the plugin version
@@ -402,6 +419,7 @@ function intastellar_dashboard_render()
         'russian' => __('Russian', 'intastellar-consents'),
         'spanish' => __('Spanish', 'intastellar-consents'),
         'swedish' => __('Swedish', 'intastellar-consents'),
+        'japanese' => __('Japanese', 'intastellar-consents'),
     );
     $locale_to_key = array(
         'da_DK' => 'danish',
@@ -428,6 +446,8 @@ function intastellar_dashboard_render()
         'es' => 'spanish',
         'sv_SE' => 'swedish',
         'sv' => 'swedish',
+        'ja_JP' => 'japanese',
+        'ja' => 'japanese',
     );
     $site_locale   = get_locale();
     $site_lang_key = isset($locale_to_key[$site_locale]) ? $locale_to_key[$site_locale] : (isset($locale_to_key[substr($site_locale, 0, 2)]) ? $locale_to_key[substr($site_locale, 0, 2)] : '');
@@ -665,6 +685,7 @@ function initIntastellarSettingsPage()
     add_submenu_page("intastellar-consents", "Branding", "Branding", "manage_options", "intastellar-consents/branding", "intastellarCookieBranding", null);
     add_submenu_page("intastellar-consents", "Settings", "Settings", "manage_options", "intastellar-consents/settings", "intastellarCookieSettings", null);
     add_submenu_page("intastellar-consents", "Privacy", "Privacy", "manage_options", "intastellar-consents/privacy", "intastellarGDPRPrivacyPage", null);
+    add_submenu_page("intastellar-consents", "A/B Testing", "A/B Testing", "manage_options", "intastellar-consents/ab-testing", "intastellarABTesting", null);
     add_submenu_page("intastellar-consents", "Help", "Help", "manage_options", "intastellar-consents/help", "intastellarCookieHelp", null);
 }
 add_action('admin_menu', 'initIntastellarSettingsPage');
@@ -812,6 +833,8 @@ function intastellarCookieSettings()
                                     <option value="russian" <?php selected($language, 'russian'); ?>><?php esc_html_e('Russian', 'intastellar-consents'); ?></option>
                                     <option value="spanish" <?php selected($language, 'spanish'); ?>><?php esc_html_e('Spanish', 'intastellar-consents'); ?></option>
                                     <option value="swedish" <?php selected($language, 'swedish'); ?>><?php esc_html_e('Swedish', 'intastellar-consents'); ?></option>
+                                    <option value="japanese" <?php selected($language, 'japanese'); ?>><?php esc_html_e('Japanese', 'intastellar-consents'); ?></option>
+                                    <option value="korean" <?php selected($language, 'korean'); ?>><?php esc_html_e('Korean', 'intastellar-consents'); ?></option>
                                 </select>
                             </div>
 
@@ -1065,6 +1088,28 @@ function intastellarCookieBranding()
     </section>
 <?php } ?>
 <?php
+function intastellarABTesting()
+{
+?>
+    <section class="intastellarPluginContent">
+        <?php include("intastellarGDPRAdminPanelHeader.php"); ?>
+        <section class="intastellarPluginGrid">
+            <div class="intastellarPluginContent">
+                <header class="intastellarPluginPage-header">
+                    <h3 class="intastellarPluginHeader__headline"><?php esc_html_e('A/B Testing', 'intastellar-consents'); ?></h3>
+                    <p><?php esc_html_e('Test different banner variants to optimize consent rates and user experience.', 'intastellar-consents'); ?></p>
+                </header>
+                <div class="intastellar-ab-testing-page">
+                    <p><?php esc_html_e('A/B testing configuration will be available here.', 'intastellar-consents'); ?></p>
+                    <form method="post" action="options.php" enctype="multipart/form-data">
+                        <?php settings_fields('intastellar-consents_plugin_options-group'); ?>
+                    </form>
+                </div>
+                <?php include("intastellarGDPRAdminPanelFooter.php"); ?>
+            </div>
+        </section>
+    </section>
+<?php }
 function intastellarCookieHelp()
 {
     $plugin_version = get_plugin_data(__FILE__)['Version'];
