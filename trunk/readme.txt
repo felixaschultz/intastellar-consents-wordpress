@@ -2,8 +2,8 @@
 
 License:            GPL v2 or later
 License URI:        https://www.gnu.org/licenses/gpl-2.0.html
-Stable tag:         3.7.0
-Tested up to:       6.9
+Stable tag:         3.7.1
+Tested up to:       6.9.4
 Contributors:       intastellar
 Requires at least:  5.8
 Requires PHP:       7.4
@@ -151,6 +151,8 @@ You can change the placement of the banner by going to the settings page and cho
 4. The settings page: placement, cookie notice text, fullscreen mode, and language.
 
 == Changelog ==
+= 3.7.1 =
+Added support for WP Consent API
 = 3.7.0 =
 Implemented A/B testing feature. Support for LGPD and POPIA.
 = 3.6.0 =
