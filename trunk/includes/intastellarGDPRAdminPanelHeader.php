@@ -15,6 +15,7 @@ $show_review_prompt = function_exists('intastellar_should_show_review_prompt') &
     <a href="?page=intastellar-consents/branding" class="<?php echo isset($_GET['page']) && $_GET['page'] === 'intastellar-consents/branding' ? 'active' : ''; ?>"><?php esc_html_e('Branding', 'intastellar-consents'); ?></a>
     <a href="?page=intastellar-consents/settings" class="<?php echo isset($_GET['page']) && $_GET['page'] === 'intastellar-consents/settings' ? 'active' : ''; ?>"><?php esc_html_e('Banner Settings', 'intastellar-consents'); ?></a>
     <a href="?page=intastellar-consents/privacy" class="<?php echo isset($_GET['page']) && $_GET['page'] === 'intastellar-consents/privacy' ? 'active' : ''; ?>"><?php esc_html_e('Privacy Policy', 'intastellar-consents'); ?></a>
+    <a href="?page=intastellar-consents/ab-testing" class="<?php echo isset($_GET['page']) && $_GET['page'] === 'intastellar-consents/ab-testing' ? 'active' : ''; ?>"><?php esc_html_e('A/B Testing', 'intastellar-consents'); ?></a>
     <a href="?page=intastellar-consents/help" class="<?php echo isset($_GET['page']) && $_GET['page'] === 'intastellar-consents/help' ? 'active' : ''; ?>"><?php esc_html_e('Help', 'intastellar-consents'); ?></a>
 </nav>
 <?php if ($show_review_prompt) : ?>
