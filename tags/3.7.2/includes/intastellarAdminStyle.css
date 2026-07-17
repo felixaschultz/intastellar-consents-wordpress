@@ -1,0 +1,1036 @@
+:root {
+    --IntastellarPrimaryColor: #c09f53;
+    --IntastellarSecondaryColor: #a3a3a3;
+}
+
+#intastellar_gdpr_compliant .hndle {
+    display: inline;
+}
+
+/* Dashboard widget: grid layout with highlighted cards */
+.intastellar-dashboard-widget {
+    margin: 0;
+}
+
+.intastellar-dashboard-widget__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.intastellar-dashboard-widget__grid.cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+@media (max-width: 480px) {
+    .intastellar-dashboard-widget__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Settings page dashboard: clickable cards */
+.intastellar-settings-dashboard {
+    margin: 0;
+}
+
+.intastellar-settings-dashboard__cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+    .intastellar-settings-dashboard__cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .intastellar-settings-dashboard__cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+.intastellar-settings-dashboard__card {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #c3c4c7;
+    background: #fff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.intastellar-settings-dashboard__card--link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.intastellar-settings-dashboard__card--link:hover {
+    border-color: var(--IntastellarPrimaryColor);
+    box-shadow: 0 2px 8px rgba(192, 159, 83, 0.15);
+}
+
+.intastellar-settings-dashboard__card-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #646970;
+    margin-bottom: 10px;
+}
+
+.intastellar-settings-dashboard__card-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d2327;
+    margin-bottom: 8px;
+    word-break: break-word;
+}
+
+.intastellar-settings-dashboard__preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    min-height: 36px;
+}
+
+.intastellar-settings-dashboard__color-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.intastellar-settings-dashboard__logo-preview {
+    max-width: 80px;
+    max-height: 32px;
+    object-fit: contain;
+}
+
+.intastellar-settings-dashboard__no-logo {
+    font-size: 12px;
+    color: #8c8f94;
+    font-style: italic;
+}
+
+.intastellar-settings-dashboard__card-action {
+    font-size: 12px;
+    color: var(--IntastellarPrimaryColor);
+    font-weight: 500;
+}
+
+.intastellar-settings-dashboard__card--link:hover .intastellar-settings-dashboard__card-action {
+    text-decoration: underline;
+}
+
+.intastellar-settings-dashboard__card--link.intastellar-dashboard-widget__card--ok {
+    border-color: #00a32a;
+    background: #edfaef;
+}
+
+.intastellar-settings-dashboard__card--link.intastellar-dashboard-widget__card--warning {
+    border-color: #dba617;
+    background: #fcf0e3;
+}
+
+.intastellar-settings-dashboard__card--link.intastellar-dashboard-widget__card--ok .intastellar-settings-dashboard__card-action,
+.intastellar-settings-dashboard__card--link.intastellar-dashboard-widget__card--warning .intastellar-settings-dashboard__card-action {
+    color: #2271b1;
+}
+
+.intastellar-settings-dashboard .intastellar-dashboard-widget__grid {
+    margin-top: 0;
+}
+
+/* Branding page: dashboard-style cards */
+.intastellar-branding-page {
+    margin: 0;
+}
+
+.intastellar-branding-page__card-preview {
+    margin-bottom: 12px;
+}
+
+.intastellar-branding-page__cards{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.intastellar-branding-page__preview-color {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    display: block;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.intastellar-branding-page__preview-color::-webkit-color-swatch-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.intastellar-branding-page__preview-logo-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+    padding: 12px;
+    background: #f6f7f7;
+    border: 1px solid #c3c4c7;
+    border-radius: 8px;
+}
+
+.intastellar-branding-page__card{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #c3c4c7;
+    background: #f6f7f7;
+}
+
+.intastellar-branding-page__preview-logo {
+    max-width: 140px;
+    max-height: 60px;
+    object-fit: contain;
+}
+
+.intastellar-branding-page__preview-no-logo {
+    font-size: 13px;
+    color: #8c8f94;
+    font-style: italic;
+}
+
+.intastellar-branding-page__form {
+    margin: 0;
+}
+
+.intastellar-branding-page__cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+    .intastellar-branding-page__cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+.intastellar-branding-page__card {
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #c3c4c7;
+    background: #fff;
+}
+
+.intastellar-branding-page__card .intastellar-settings-dashboard__card-label {
+    margin-bottom: 12px;
+}
+
+.intastellar-branding-page__input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.intastellar-branding-page__input:focus {
+    border-color: var(--IntastellarPrimaryColor);
+    outline: none;
+    box-shadow: 0 0 0 1px var(--IntastellarPrimaryColor);
+}
+
+.intastellar-branding-page__color-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.intastellar-branding-page__color-input {
+    width: 44px;
+    height: 36px;
+    padding: 2px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #fff;
+}
+
+.intastellar-branding-page__color-input::-webkit-color-swatch-wrapper {
+    padding: 2px;
+}
+
+.intastellar-branding-page__color-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 3px;
+}
+
+.intastellar-branding-page__color-hex {
+    width: 100px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-family: monospace;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+}
+
+.intastellar-branding-page__color-hex:focus {
+    border-color: var(--IntastellarPrimaryColor);
+    outline: none;
+}
+
+.intastellar-branding-page__hint {
+    margin: 0 0 12px;
+    font-size: 12px;
+    color: #646970;
+}
+
+.intastellar-branding-page__footer {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #646970;
+}
+
+.intastellar-branding-page__footer a {
+    color: #2271b1;
+}
+
+/* Cookie settings page: card layout */
+.intastellar-settings-page {
+    margin: 0;
+}
+
+.intastellar-settings-page__form {
+    margin: 0;
+}
+
+.intastellar-settings-page__cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+    .intastellar-settings-page__cards {
+        grid-template-columns: 1fr;
+    }
+
+    .intastellar-settings-page__style-grid {
+        flex-direction: column;
+    }
+}
+
+.intastellar-settings-page__card {
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #c3c4c7;
+    background: #fff;
+}
+
+.intastellar-settings-page__card--wide {
+    grid-column: 1 / -1;
+}
+
+.intastellar-settings-page__card .intastellar-settings-dashboard__card-label {
+    margin-bottom: 12px;
+}
+
+.intastellar-settings-page__input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.intastellar-settings-page__input:focus {
+    border-color: var(--IntastellarPrimaryColor);
+    outline: none;
+    box-shadow: 0 0 0 1px var(--IntastellarPrimaryColor);
+}
+
+.intastellar-settings-page__textarea {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    box-sizing: border-box;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.intastellar-settings-page__textarea:focus {
+    border-color: var(--IntastellarPrimaryColor);
+    outline: none;
+    box-shadow: 0 0 0 1px var(--IntastellarPrimaryColor);
+}
+
+.intastellar-settings-page__hint {
+    margin: 0 0 12px;
+    font-size: 12px;
+    color: #646970;
+}
+
+.intastellar-settings-page__style-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 4px;
+}
+
+.intastellar-settings-page__style-grid .intastellarPlugin-style-seletor {
+    margin: 0;
+    padding: 0;
+}
+
+.intastellar-settings-page__radio-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 4px;
+}
+
+.intastellar-settings-page__radio-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.intastellar-settings-page__radio-label input {
+    accent-color: var(--IntastellarPrimaryColor);
+}
+
+.intastellar-settings-page__footer {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #646970;
+}
+
+.intastellar-settings-page__footer a {
+    color: #2271b1;
+}
+
+.intastellar-dashboard-widget__card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #c3c4c7;
+    background: #f6f7f7;
+}
+
+.intastellar-dashboard-widget__card--ok {
+    border-color: #00a32a;
+    background: #edfaef;
+}
+
+.intastellar-dashboard-widget__card--warning {
+    border-color: #dba617;
+    background: #fcf0e3;
+}
+
+.intastellar-dashboard-widget__card--error {
+    border-color: #d63638;
+    background: #fcf0f1;
+}
+
+.intastellar-dashboard-widget__card-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #646970;
+    margin-bottom: 4px;
+}
+
+.intastellar-dashboard-widget__card--ok .intastellar-dashboard-widget__card-label {
+    color: #1e4620;
+}
+
+.intastellar-dashboard-widget__card--warning .intastellar-dashboard-widget__card-label {
+    color: #614200;
+}
+
+.intastellar-dashboard-widget__card-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d2327;
+    word-break: break-all;
+}
+
+.intastellar-dashboard-widget__card--ok .intastellar-dashboard-widget__card-value {
+    color: #00a32a;
+}
+
+.intastellar-dashboard-widget__card--warning .intastellar-dashboard-widget__card-value {
+    color: #dba617;
+}
+
+.intastellar-dashboard-widget__card--error .intastellar-dashboard-widget__card-label {
+    color: #3c434a;
+}
+
+.intastellar-dashboard-widget__card--error .intastellar-dashboard-widget__card-value {
+    color: #d63638;
+}
+
+.intastellar-dashboard-widget__verdict {
+    margin: 0 0 4px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+}
+
+.intastellar-dashboard-widget__verdict--ok {
+    color: #00a32a !important;
+}
+
+.intastellar-dashboard-widget__verdict--error {
+    color: #d63638 !important;
+}
+
+.intastellar-dashboard-widget__verdict-note {
+    margin: 0 0 10px !important;
+    font-size: 12px !important;
+    color: #646970 !important;
+    font-style: italic;
+}
+
+.intastellar-dashboard-widget__meta {
+    margin: 0 0 10px;
+    padding: 0;
+    font-size: 12px;
+    color: #646970;
+}
+
+.intastellar-dashboard-widget__meta-line {
+    margin: 0 0 4px;
+}
+
+.intastellar-dashboard-widget__meta-note {
+    margin: 0 0 4px;
+    font-style: italic;
+}
+
+.intastellar-dashboard-widget__message {
+    margin: 0 0 10px;
+    font-size: 12px;
+}
+
+.intastellar-dashboard-widget__actions {
+    margin: 12px 0 0;
+    padding: 0;
+}
+
+.intastellar-dashboard-widget__actions .button + a {
+    margin-left: 8px;
+}
+
+.intastellar-dashboard-widget__footer {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #c3c4c7;
+    font-size: 12px;
+    color: #646970;
+}
+
+.intastellar-dashboard-widget__footer a {
+    color: #2271b1;
+    text-decoration: none;
+}
+
+.intastellar-dashboard-widget__footer a:hover {
+    color: #135e96;
+    text-decoration: underline;
+}
+
+.intastellar-dashboard-widget__footer-sep {
+    margin: 0 4px;
+    color: #c3c4c7;
+}
+
+.intastellar-widget-warning {
+    margin: 0 0 8px !important;
+    padding: 6px 10px !important;
+    background: #fcf0e3 !important;
+    border-left: 4px solid #dba617 !important;
+    font-size: 12px !important;
+}
+
+/* Ask for review (on WordPress) banner & popup */
+.intastellar-review-banner {
+    background: linear-gradient(135deg, #f8f6f0 0%, #f0ebe0 100%);
+    border-bottom: 1px solid #e0d9c8;
+    padding: 12px 1.25em;
+    box-shadow: 0 1px 0 rgba(192, 159, 83, 0.1);
+}
+
+.intastellar-review-banner__content {
+    max-width: 90%;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 20px;
+}
+
+.intastellar-review-banner__text {
+    flex: 1 1 280px;
+    font-size: 14px;
+    color: #3c434a;
+}
+
+.intastellar-review-banner__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.intastellar-review-banner__btn {
+    display: inline-block;
+    padding: 8px 14px;
+    font-size: 13px;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.intastellar-review-banner__btn--primary {
+    background: var(--IntastellarPrimaryColor);
+    color: #fff;
+    border-color: var(--IntastellarPrimaryColor);
+}
+
+.intastellar-review-banner__btn--primary:hover {
+    background: #a88b45;
+    border-color: #a88b45;
+    color: #fff;
+}
+
+.intastellar-review-banner__btn--secondary {
+    background: #fff;
+    color: #2c3338;
+    border-color: #c3c4c7;
+}
+
+.intastellar-review-banner__btn--secondary:hover {
+    background: #f0f0f1;
+    border-color: #8c8f94;
+}
+
+.intastellar-review-banner__btn--dismiss {
+    background: transparent;
+    color: #646970;
+    border-color: transparent;
+}
+
+.intastellar-review-banner__btn--dismiss:hover {
+    color: #2c3338;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.intastellar-review-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.2s ease, opacity 0.2s ease;
+}
+
+.intastellar-review-popup.is-open {
+    visibility: visible;
+    opacity: 1;
+}
+
+.intastellar-review-popup.is-open .intastellar-review-popup__box {
+    transform: scale(1);
+}
+
+.intastellar-review-popup__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.intastellar-review-popup__box {
+    position: relative;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+    padding: 24px 28px;
+    max-width: 420px;
+    width: 100%;
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+}
+
+.intastellar-review-popup__title {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: #1d2327;
+}
+
+.intastellar-review-popup__text {
+    margin: 0 0 20px;
+    font-size: 14px;
+    color: #50575e;
+    line-height: 1.5;
+}
+
+.intastellar-review-popup__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.intastellarPluginContent>* {
+    box-sizing: border-box;
+}
+
+.intastellarPluginContent {
+    margin: 0 auto;
+}
+
+.intastellarPluginHeader-navigation{
+    display: flex;
+    gap: 10px;
+    max-width: 90%;
+    margin: 10px auto;
+}
+.intastellarPluginHeader-navigation a {
+    text-decoration: none;
+    color: #000;
+    padding: 15px;
+    display: block;
+    font-size: 16px;
+}
+
+.intastellarPluginHeader-navigation a.active {
+    border-bottom: 2px solid var(--IntastellarPrimaryColor);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+}
+
+.intastellarPluginHeader {
+    background-color: #ffffff;
+    border-bottom: 1px solid #7b7b7b;
+    box-shadow: 0 1px 0 #ccd0d4, 0 1px 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.intastellarPluginHeader-content {
+    padding: 0 1.25em;
+    max-width: 90%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+}
+
+.intastellar-select-logo-button {
+    margin-top: 10px;
+    border: 1px solid var(--IntastellarPrimaryColor);
+    padding: 15px;
+    background: transparent;
+}
+
+.intastellarFeedback {
+    margin-left: 20px;
+}
+
+.intastellarPluginHeader__logo {
+    width: 250px;
+}
+
+.intastellarPluginPage-header {
+    margin-bottom: 30px;
+}
+
+#wpcontent {
+    padding-left: 0;
+}
+
+.intastellarPluginHeader__headline {
+    font-size: 18px;
+}
+
+.intastellarPluginContent__items {
+    margin: 15px 0px;
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    width: auto;
+    position: relative;
+}
+
+.intastellarCookieSettingsLogo {
+    max-height: 100px;
+    max-width: 200px;
+    object-fit: contain;
+    display: block;
+    padding: 15px;
+}
+
+.intastellarPluginContent__items .regular-text {
+    width: max-content;
+    margin: 0px 15px;
+}
+
+.intastellarPluginContent__items .regular-text.--color {
+    height: 30px;
+    width: 150px;
+    border: none;
+    border-radius: 0;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.colorValue {
+    padding: 5px 30px;
+    margin-left: -16px;
+    background-color: #b2b2b2;
+}
+
+.colorPallet {
+    display: flex;
+    align-items: center;
+}
+
+.intastellarPluginContent__items .regular-text.--color::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.intastellarPluginContent__items .regular-text.--color::-webkit-color-swatch {
+    border: none;
+}
+
+.intastellarPluginContent__items .regular-text.--radio {
+    width: auto;
+}
+
+.intastellarPluginContent__items .regular-text.--fullWidth {
+    width: auto;
+    margin-top: 5px;
+}
+
+.intastellarPluginContent__items-checkbox {
+    accent-color: #c09f53;
+}
+
+.IntastellarCookieSettingsPage__Image {
+    position: absolute;
+    z-index: 2;
+    width: 150px;
+    left: 70px;
+    top: 30px;
+    object-fit: cover;
+    margin: 0px 10px;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.intastellarPluginContent__items-viewImage {
+    cursor: pointer;
+    margin: 0px 10px;
+}
+
+.intastellarPluginContent__items-viewImage:hover>.IntastellarCookieSettingsPage__Image {
+    opacity: 1;
+    visibility: visible;
+}
+
+.intastellarPluginGrid {
+    padding: 25px 50px;
+}
+
+.intastellarPlugin-sideNavigation {
+    background-color: var(--IntastellarSecondaryColor);
+    color: #fff;
+    border-top: 2px solid var(--IntastellarPrimaryColor);
+    border-bottom: 2px solid var(--IntastellarPrimaryColor);
+}
+
+.intastellarPlugin-sideNavigation a {
+    display: block;
+    padding: 15px;
+    padding-right: 150px;
+    width: 250px;
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    box-sizing: border-box;
+    border-bottom: 1px solid #7b7b7b;
+}
+
+.intastellarPlugin-sideNavigation a:last-child {
+    border: none;
+}
+
+.intastellarPlugin-sideNavigation a.active {
+    background-color: #f0f0f1;
+    color: rgb(192, 159, 83);
+    border: none;
+}
+
+.intastellarPluginSaveButton {
+    padding: 10px 15px;
+    color: #fff;
+    border: none;
+    background: rgba(0, 35, 104, 1);
+    background-color: rgb(192, 159, 83);
+}
+
+.intastellarPoweredByLogoContainer {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 20%;
+}
+
+.intastellarPoweredByLogoContainer a {
+    grid-column: 2/3;
+    text-align: right;
+}
+
+.intastellarPoweredByLogo {
+    max-width: 100%;
+    width: 100%;
+    padding: 10px;
+}
+
+.intastellarPlugin-style-seletor {
+    padding: 15px;
+    width: max-content;
+}
+
+.intastellar-banner-style-preview {
+    width: 170px;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+.intastellar-banner-style-preview.--banner {
+    width: 400px;
+    height: 200px;
+}
+
+.intastellarPlugin-style-seletor input {
+    display: none;
+}
+
+.intastellar-banner-style-preview-wrapper {
+    position: relative;
+}
+
+.intastellarPlugin-style-seletor input:checked ~ .intastellar-banner-style-preview-wrapper::after {
+    content: 'Selected';
+    color: var(--IntastellarPrimaryColor);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-left: 10px;
+    margin-top: 5px;
+    display: block;
+    position: absolute;
+    top: 41px;
+    right: -23px;
+    background-color: var(--IntastellarPrimaryColor);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 10px;
+    transform: rotate(45deg);
+}
+
+.intastellar-dashboard-widget-list{
+    margin:0;
+    padding-left:1.2em;
+    font-size:12px;
+}
+.intastellar-dashboard-widget-list li{
+    margin:0;
+    padding:0;
+}
+.intastellar-dashboard-widget-list li:before{
+    content:'•';
+    margin-right:0.5em;
+    color:#c09f53;
+}
+
+@media screen and (max-width:782px) {
+
+    .intastellarPluginGrid,
+    .intastellarPoweredByLogoContainer,
+    .intastellarPluginContent .grid,
+    .intastellarPluginContent__items {
+        grid-template-columns: 1fr;
+        display: block;
+    }
+
+    .intastellarPluginHeader__logo {
+        width: 60%;
+    }
+
+    .intastellarPlugin-sideNavigation {
+        display: none;
+    }
+
+    .intastellarPluginHeader-navigation{
+        max-width: 100%;
+        margin: 0;
+        overflow: scroll;
+    }
+
+    .intastellar-banner-style-preview.--banner,
+    .intastellar-banner-style-preview {
+        width: 300px;
+    }
+
+    .intastellarPluginGrid {
+        padding: 15px;
+    }
+
+    .intastellarPluginContent {
+        margin-left: -10px;
+    }
+
+    .intastellarPluginContent__items .regular-text {
+        margin: 0;
+    }
+
+    .intastellarCookieSettingsLogo {
+        padding: 15px;
+        width: auto;
+    }
+}

@@ -1,0 +1,257 @@
+# Copyright (C) 2025 Intastellar Consents Solutions
+# This file is distributed under the same license as the Intastellar Consents Solutions plugin.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Intastellar Consents Solutions 3.5.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-10 00:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Manual\n"
+"X-Domain: intastellar-gdpr-cookie-banner\n"
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Send Feedback"
+msgstr ""
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Enjoying Intastellar Consents? Leave us a review on WordPress.org — it helps others discover the plugin."
+msgstr ""
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Leave a review"
+msgstr ""
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Open on WordPress.org"
+msgstr ""
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Maybe later"
+msgstr ""
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Leave a review on WordPress.org"
+msgstr ""
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Your review helps other users and supports the plugin. Thank you!"
+msgstr ""
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Open review page"
+msgstr ""
+
+#: includes/intastellarGDPRAdminPanelHeader.php
+msgid "Close"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Settings"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Adjust your cookie banner settings here: placement, cookie notice text, fullscreen mode, and preferred language."
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Choose your banner style:"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Placement:"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Left"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Right"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Your Main Domain"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Language:"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Auto detect"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Danish"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Dutch"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "English"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "French"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Finnish"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "German"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Italian"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Norwegian"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Russian"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Spanish"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Swedish"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Required Cookies list:"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Enter a list of cookies that your website is required to use."
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Example 1:"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Example 2:"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Display Cookie Notice text:"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Yes"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "No"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Save changes"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "You can also read the docs and download the newest version:"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Intastellar GDPR cookie banner"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Welcome to Intastellar Consents Solutions"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "This cookie banner helps you and your website become GDPR compliant."
+msgstr ""
+
+#: includes/int-functions.php
+msgid "To get started we need your Privacy Policy URL. After that you can edit the branding (brand color and logo) and in Settings configure placement, cookie notice text, and language."
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Want to learn more? Read more at:"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Let's get started with your privacy policy and preferred language."
+msgstr ""
+
+#: includes/int-functions.php
+msgid "URL to your Privacy Policy page*:"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Open in new window"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Intastellar Consents Solutions"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Privacy Policy"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Change your privacy link and choose whether to open it in a new window."
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Branding"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Customize the banner to reflect your brand identity. Change the appearance of the cookie banner using your brand color and logo."
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Company name:"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Brand Color:"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Company Logo:"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Recommended: max-width 200px, min-width 100px for near-square logos."
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Select or Upload Logo"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Help"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Documentation and FAQs to help you get started:"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Official Documentation"
+msgstr ""
+
+#: includes/int-functions.php
+msgid "Official FAQs"
+msgstr ""
